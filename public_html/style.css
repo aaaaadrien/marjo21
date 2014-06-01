@@ -1,0 +1,68 @@
+body
+{
+width: 100%;
+margin-left : auto;
+margin-right: auto;
+background: royalblue;
+}
+
+h1
+{
+text-align: center;
+color: firebrick;
+}
+
+h2
+{
+text-align: center;
+color: darkslategray
+}
+
+h3
+{
+text-align: center;
+
+}
+
+table{
+border: 1px solid grey;
+margin: auto;
+background: skyblue;
+width: 960px;
+}
+
+tr
+{
+border: 1px solid grey;
+}
+
+th
+{
+border: 1px solid grey;
+}
+
+td
+{
+border: 1px solid grey;
+}
+
+#selection
+{
+width: 500px;
+margin-left: auto;
+margin-right: auto;
+text-align: center;
+}
+
+#historique
+{
+margin-top: 20px;
+margin-left: auto;
+margin-right: auto;
+padding: 20px;
+width: 1000px;
+border-width: 1px;
+border-style: solid;
+border-color: black;
+background: white;
+}
