@@ -132,9 +132,9 @@ sub on_public
 			} 
 		
 
-			if ($commande eq 'whoiam')
+			if ($commande eq 'ping')
 			{
-				&whoiam($channel, $event->{'nick'});
+				&ping($channel, $event->{'nick'});
 			}
 
 			if ($commande eq 'reload')
@@ -294,7 +294,7 @@ sub on_msg()
 				&reload($event->{'nick'},$event->{'nick'});
 			}
 
-			if ($commande eq 'whoiam')
+			if ($commande eq 'ping')
 			{
 				&whoiam($event->{'nick'},$event->{'nick'});
 			}
@@ -319,8 +319,8 @@ sub on_msg()
 # &fonction($event->{'nick'},$event->{'nick'}); pour les messages privés
 # On recupere ainsi avec @_[0] le canal ou le pseudo d'où écrire. et avec @_[1] le pseudo de l'émetteur de la commande
 
-sub whoiam {
-	$conn->privmsg(@_[0],"Ne t'appellerais-tu pas ... @_[1] ?");
+sub ping {
+	$conn->privmsg(@_[0],"Je suis toujours là @_[1] ...");
 }
 
 sub help {
@@ -333,7 +333,6 @@ sub help {
 	$conn->privmsg(@_[1], "!bonjour mot : Affiche « Bonjour mot » dans le canal");
 	$conn->privmsg(@_[1], "!link url : Affiche le titre de la page à l'adresse url ");
 	$conn->privmsg(@_[1], "!last : Affiche des informations sur le dernier lien posté ");
-	$conn->privmsg(@_[1], "!whoiam : Affiche à l'écran qui tu es");
 
 	$conn->privmsg(@_[1], "Pour consulter l'historique des liens postés, c'est par ici : $website");
 
