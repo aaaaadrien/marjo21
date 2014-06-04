@@ -258,7 +258,7 @@ sub on_public
 					
 					my @splitlink = split(/;/,$lastline);
 					
-					
+					$conn->print("Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] )");
 					$conn->privmsg($channel,"Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] ) ");
 				}
 			} #Fin !last
@@ -330,8 +330,9 @@ sub help {
 		$conn->privmsg($channel,"@_[1] : Je t'ai envoyé un message privé mon petit chou !");
 	}
 	$conn->privmsg(@_[1], "!help : Affiche le manuel d'utilisation");
-	$conn->privmsg(@_[1], "!bonjour mot : Affiche Hello mot dans le canal");
+	$conn->privmsg(@_[1], "!bonjour mot : Affiche « Bonjour mot » dans le canal");
 	$conn->privmsg(@_[1], "!link url : Affiche le titre de la page à l'adresse url ");
+	$conn->privmsg(@_[1], "!last : Affiche des informations sur le dernier lien posté ");
 	$conn->privmsg(@_[1], "!whoiam : Affiche à l'écran qui tu es");
 
 	$conn->privmsg(@_[1], "Pour consulter l'historique des liens postés, c'est par ici : $website");
