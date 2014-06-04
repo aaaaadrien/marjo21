@@ -210,7 +210,58 @@ sub on_public
                     				$conn->print("Un paramètre attendu");
 						$conn->privmsg($channel,"$event->{'nick'} : Une url est attendue après la commande !link. Taper !help pour plus d'informations...");
                 			}
-			}
+			}#Fin !link
+			
+			if ($commande eq 'last')
+			{
+				my $dossier = "public_html/logs/";
+				opendir(DOSSIER, $dossier );
+				my @entrees = readdir(DOSSIER);
+				closedir(DOSSIER);
+				my $e;
+				my $modtime;
+				my $lastfic = "";
+				
+				if ( $#entrees gt 2 )
+				{
+					foreach $e (@entrees)
+					{
+						if ( $e ne "." && $e ne ".." )
+						{
+							if ($lastfic eq "")
+							{
+								$modtime = (stat($dossier.$e))[9];
+								$lastfic = $e;
+							}
+							else
+							{
+								my $curfiletime = (stat($dossier.$e))[9];
+								if ( $curfiletime gt $modtime )
+								{
+									$lastfic = $e;
+								}
+							}
+							
+						}
+						
+					}
+					
+					# Création ou ouverture du fichier
+					open (FICHIER, "$dossier$lastfic") || die ();
+					
+					my $lastline;
+						while(<FICHIER>) {
+						chomp;
+						$lastline = $_ if eof;
+					}
+					close (FICHIER);
+					
+					my @splitlink = split(/;/,$lastline);
+					
+					
+					$conn->privmsg($channel,"Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] ) ");
+				}
+			} #Fin !last
 		}		
         	else
         	{
