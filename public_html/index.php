@@ -12,6 +12,7 @@
 Je suis encore en cours de création, il peut rester encore quelques bogues....
 	<h1>marjo21 : Liens postés</h1>
 
+	<meta  http-equiv="refresh" content="60; url=<?php echo $_SERVER['REQUEST_URI'] ;?>" />
 	
 	<div id="selection">
 	<select name="historique" onchange="document.location = this.options[this.selectedIndex].value;">
