@@ -296,7 +296,7 @@ sub on_msg()
 
 			if ($commande eq 'ping')
 			{
-				&whoiam($event->{'nick'},$event->{'nick'});
+				&ping($event->{'nick'},$event->{'nick'});
 			}
 			
 			if ($commande eq 'help')
