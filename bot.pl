@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-
+use threads;
 
 # LIBS
 # perl-LWP-UserAgent-Determined-1.06-1.fc20.noarch
@@ -11,10 +11,11 @@ use warnings;
 
 # On utilise la librairie Net::IRC pour se connecter à IRC
 use Net::IRC;
-use LWP::UserAgent;  
-use HTTP::Request;  
+use LWP::UserAgent;
+use HTTP::Request;
 
 my $times = time();
+my $alive = 1;
 
 # On charge la config
 my $cfg = "bot.cfg";
@@ -46,7 +47,6 @@ if ( length($server) < 2 || length($channel) < 2 || length($username) < 2)
 # Fin de la config
 
 # Configuration des options de connexion (serveur, login) :
-# my $server = 'irc.freenode.net';
 my $nick = $username;
 
 # Informations concernant le Bot :
@@ -54,14 +54,8 @@ my $ircname = 'marjo21 Web Link';
 # my $username = $nick;
 my $version = '1.0';
 
-
-# Channel sur lequel on veut que le Bot aille :
-#my $channel = '#MLO';
-
-
 # On crée l'objet qui nous permet de nous connecter à IRC :
 my $irc = new Net::IRC;
-
 
 # On crée l'objet de connexion à IRC :
 my $conn = $irc->newconn(
@@ -94,7 +88,20 @@ sub on_connect
     print "<$nick>\t| Salutations !\n";
     
     $conn->{'connected'} = 1;
+    
+    my $thrheartbeat = threads->new(\&heartbeat);
 } # Fin on_connect
+
+
+
+sub heartbeat
+{
+	while ( $alive eq 1 )
+	{
+		sleep 120;
+		$conn->join($channel);
+	}
+}
 
 
 sub on_public
@@ -131,7 +138,6 @@ sub on_public
 				&help($channel, $event->{'nick'});
 			} 
 		
-
 			if ($commande eq 'ping')
 			{
 				&ping($channel, $event->{'nick'});
@@ -293,7 +299,7 @@ sub on_msg()
 			{
 				&reload($event->{'nick'},$event->{'nick'});
 			}
-
+			
 			if ($commande eq 'ping')
 			{
 				&ping($event->{'nick'},$event->{'nick'});
