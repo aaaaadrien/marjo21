@@ -8,6 +8,8 @@ use threads;
 # perl-LWP-UserAgent-Determined-1.06-1.fc20.noarch
 # perl-LWP-Protocol-https-6.04-4.fc20.noarch
 # perl-Net-IRC-0.79-8.fc20.noarch
+# It's possible to install modules with "cpan" and "install HTTP::Request" for example
+# To test the resuquest it's possible to use the command : lwp-request -des http://url.com
 
 # On utilise la librairie Net::IRC pour se connecter à IRC
 use Net::IRC;
@@ -51,7 +53,6 @@ my $nick = $username;
 
 # Informations concernant le Bot :
 my $ircname = 'marjo21 Web Link';
-# my $username = $nick;
 my $version = '1.0';
 
 # On crée l'objet qui nous permet de nous connecter à IRC :
@@ -84,8 +85,8 @@ sub on_connect
     my ($conn, $event) = @_;
     
     $conn->join($channel);
-    $conn->privmsg($channel, 'Salutations !');
-    print "<$nick>\t| Salutations !\n";
+    #$conn->privmsg($channel, 'Salutations !');
+    #print "<$nick>\t| Salutations !\n";
     
     $conn->{'connected'} = 1;
     
@@ -106,13 +107,13 @@ sub heartbeat
 		sleep $check;
 		$conn->privmsg($username, '!heartbeat');	
 		sleep 1;
-		open (FICHIER, "heartbeat");
+		open (HEART, "heartbeat");
 		my $heartbeat;
-		while(<FICHIER>) {
+		while(<HEART>) {
 			chomp;
 			$heartbeat = $_;
 		}
-		close (FICHIER);
+		close (HEART);
 
 		if ( time()-$heartbeat gt 3*$check )
 		{
@@ -135,22 +136,6 @@ sub on_public
         	my $commande = ($text =~ m/^!([^ ]*)/)[0];
         	if ($commande ne '')
         	{
-            		if ($commande eq 'bonjour')
-            		{
-		                my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
-		                if (defined($params[0]) && $params[0] ne '')
-		                {
-					# Un paramètre (non vide) a été passé à la commande
-			                # => On va pouvoir l'utiliser
-			                $conn->privmsg($channel, "Bonjour $params[0] !"); # Salutation sur le channel
-			                $conn->print("<$nick>\t| Bonjour $params[0] !");  # Et echo sur la console
-                		}
-                		else
-                		{
-					# Un paramètre attendu n'a pas été fourni à la commande...
-			                $conn->print("Un paramètre attendu");
-                		}
-            		}
             		
 			if ($commande eq 'help')
 			{
@@ -323,9 +308,9 @@ sub on_msg()
 			{
 				if ( $event->{'nick'} eq $username )
 				{
-					open (FICHIER, ">heartbeat");
-					print FICHIER time();
-					close (FICHIER);
+					open (HEART, ">heartbeat");
+					print HEART time();
+					close (HEART);
 				}
 			}
 			
@@ -365,7 +350,6 @@ sub help {
 		$conn->privmsg($channel,"@_[1] : Je t'ai envoyé un message privé mon petit chou !");
 	}
 	$conn->privmsg(@_[1], "!help : Affiche le manuel d'utilisation");
-	$conn->privmsg(@_[1], "!bonjour mot : Affiche « Bonjour mot » dans le canal");
 	$conn->privmsg(@_[1], "!link url : Affiche le titre de la page à l'adresse url ");
 	$conn->privmsg(@_[1], "!last : Affiche des informations sur le dernier lien posté ");
 
