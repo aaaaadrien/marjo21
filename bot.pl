@@ -96,10 +96,29 @@ sub on_connect
 
 sub heartbeat
 {
+	my $check = 10;
+	
+	sleep 10;
+	$conn->privmsg($username, '!heartbeat');
+	
 	while ( $alive eq 1 )
 	{
-		sleep 120;
-		$conn->join($channel);
+		sleep $check;
+		$conn->privmsg($username, '!heartbeat');	
+		sleep 1;
+		open (FICHIER, "heartbeat");
+		my $heartbeat;
+		while(<FICHIER>) {
+			chomp;
+			$heartbeat = $_;
+		}
+		close (FICHIER);
+
+		if ( time()-$heartbeat gt 3*$check )
+		{
+		      exec( $^X, $0);
+		}
+		
 	}
 }
 
@@ -287,7 +306,7 @@ sub on_msg()
 
 	my ($conn, $event) = @_;
 	my $text = $event->{'args'}[0];
-	$conn->print("<" . $event->{'nick'} . ">\t| $text");
+	$conn->print("<" . $event->{'nick'} . ">\t| $text") if $text ne '!heartbeat';
 
 	if (substr($text, 0, 1) eq '!')
 	{
@@ -298,6 +317,16 @@ sub on_msg()
 			if ($commande eq 'reload')
 			{
 				&reload($event->{'nick'},$event->{'nick'});
+			}
+			
+			if ($commande eq 'heartbeat')
+			{
+				if ( $event->{'nick'} eq $username )
+				{
+					open (FICHIER, ">heartbeat");
+					print FICHIER time();
+					close (FICHIER);
+				}
 			}
 			
 			if ($commande eq 'ping')
