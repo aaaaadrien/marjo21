@@ -5,17 +5,21 @@ use warnings;
 use threads;
 
 # LIBS
+# perl-Net-IRC-0.79-8.fc20.noarch
+# perl-Net-SSLeay-1.55-4.fc20.x86_64
 # perl-LWP-UserAgent-Determined-1.06-1.fc20.noarch
 # perl-LWP-Protocol-https-6.04-4.fc20.noarch
-# perl-Net-IRC-0.79-8.fc20.noarch
-# It's possible to install modules with "cpan" : cpan -f -i LWP::UserAgent
+
+# It's possible to install modules with "cpan" : cpan -fi LWP::UserAgent
 # To test the resuquest it's possible to use the command : lwp-request -des http://url.com
 
-# On utilise la librairie Net::IRC pour se connecter à IRC
+# Liste des librairies utilisées :
 use Net::IRC;
+use Net::SSLeay; # A réinstaller en cas de mise à jour d'OpenSSL !!!
 use LWP::UserAgent;
 use LWP::Protocol::https;
 use HTTP::Request;
+
 
 my $times = time();
 my $alive = 1;
