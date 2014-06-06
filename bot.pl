@@ -14,6 +14,7 @@ use threads;
 # On utilise la librairie Net::IRC pour se connecter à IRC
 use Net::IRC;
 use LWP::UserAgent;
+use LWP::Protocol::https
 use HTTP::Request;
 
 my $times = time();
