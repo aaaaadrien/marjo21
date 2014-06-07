@@ -60,7 +60,7 @@ Je suis encore en cours de création, il peut rester encore quelques bogues....
 			{
 				#print '<tr><td>'.str_replace(";","</td><td>",$l).'</td></tr>';
 				$ligne = explode(";", $l);
-				echo '<tr><td>'.$ligne[0].'</td><td>'.$ligne[1].'</td><td>'.$ligne[2].'</td><td><a href="'.$ligne[3].'" />'.$ligne[4].'</a></td></tr>';
+				echo '<tr><td>'.$ligne[0].'</td><td>'.$ligne[1].'</td><td>'.$ligne[2].'</td><td><a target="_blank" href="'.$ligne[3].'" />'.$ligne[4].'</a></td></tr>';
 			}
 			echo '</table>';
 		}
