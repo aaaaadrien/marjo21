@@ -172,8 +172,8 @@ sub on_public
 						my $blacklisted = &blacklistedurl($url);
 						if ( $blacklisted eq 1)
 						{
-							$conn->privmsg($channel, "Contenu sensuré");
-							$conn->print("<$nick>\t| Contenu sensuré");
+							$conn->privmsg($channel, "Contenu censuré...");
+							$conn->print("<$nick>\t| Contenu censuré...");
 						}
 						
 						
