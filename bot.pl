@@ -166,7 +166,7 @@ sub on_public
 
 
 						my $url = "$params[0]";
-						my $ua = LWP::UserAgent->new(agent => 'Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0', ssl_opts => { verify_hostname => 1 });
+						my $ua = LWP::UserAgent->new(agent => 'Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0', ssl_opts => { verify_hostname => 0 });
 						my $res = $ua->request(HTTP::Request->new(GET => $url));
 						
 						my $blacklisted = &blacklistedurl($url);
