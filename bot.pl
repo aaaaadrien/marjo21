@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 use threads;
+use DBI;
+
 
 # LIBS
 # perl-Net-IRC-0.79-8.fc20.noarch
@@ -50,6 +52,11 @@ if ( length($server) < 2 || length($channel) < 2 || length($username) < 2)
 	print "No server or channel or username found in $cfg file !\n";
 	exit 1;
 }
+
+# On charge la base de données
+
+my $db_handle = DBI->connect("dbi:mysql:database=marjo21;host=127.0.0.1:3306;user=root;password=root");
+
 
 # Fin de la config
 
@@ -182,34 +189,38 @@ sub on_public
 							$conn->print("<$nick>\t| ".$res->title);
 						
 							#Generation de la date
-							(my $sec,my $min, my $hour,my $mday,my $mon,my $year,my $wday,my $yday,my $isdst) = localtime();
-							my @months = qw( Decembre Janvier Fevrier Mars Avril Mai Juin Juillet Aout Septembre Octobre Novembre Decembre );
-							my @days = qw( Dim Lun Mar Mer Jeu Ven Sam Dim );
-							$year+=1900;
-							$mon+=1;
+							#(my $sec,my $min, my $hour,my $mday,my $mon,my $year,my $wday,my $yday,my $isdst) = localtime();
+							#my @months = qw( Decembre Janvier Fevrier Mars Avril Mai Juin Juillet Aout Septembre Octobre Novembre Decembre );
+							#my @days = qw( Dim Lun Mar Mer Jeu Ven Sam Dim );
+							#$year+=1900;
+							#$mon+=1;
 							
 							# Rectification des heures et minutes
-							if (length($min) eq 1)
-							{
-								$min = "0".$min;
-							}
-							if (length($mon) eq 1)
-							{
-								$mon = "0".$mon;
-							}
+							#if (length($min) eq 1)
+							#{
+							#	$min = "0".$min;
+							#}
+							#if (length($mon) eq 1)
+							#{
+							#	$mon = "0".$mon;
+							#}
 
 							# Creation du nom du fichier
-							my $fic = "public_html/logs/$year-$mon--$months[$mon]-$year";
+							#my $fic = "public_html/logs/$year-$mon--$months[$mon]-$year";
 							
 							my $pseudo = $event->{'nick'};
 							my $titre = $res->title;
 
 							# Création ou ouverture du fichier
-							open (FICHIER, ">>$fic") || die ();
+							#open (FICHIER, ">>$fic") || die ();
 							# On écrit dans le fichier...
-							print FICHIER "$days[$wday] $mday;$hour:$min;$pseudo;$url;$titre \n";
-							close (FICHIER);
+							#print FICHIER "$days[$wday] $mday;$hour:$min;$pseudo;$url;$titre \n";
+							#close (FICHIER);
 							
+							my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
+							my $statement = $db_handle->prepare($sql);
+							$statement->execute($pseudo,$url,$titre);
+
 
 
 						} else {
@@ -229,53 +240,66 @@ sub on_public
 			
 			if ($commande eq 'last')
 			{
-				my $dossier = "public_html/logs/";
-				opendir(DOSSIER, $dossier );
-				my @entrees = readdir(DOSSIER);
-				closedir(DOSSIER);
-				my $e;
-				my $modtime;
-				my $lastfic = "";
+				#my $dossier = "public_html/logs/";
+				#opendir(DOSSIER, $dossier );
+				#my @entrees = readdir(DOSSIER);
+				#closedir(DOSSIER);
+				#my $e;
+				#my $modtime;
+				#my $lastfic = "";
 				
-				if ( $#entrees gt 2 )
-				{
-					foreach $e (@entrees)
-					{
-						if ( $e ne "." && $e ne ".." )
-						{
-							if ($lastfic eq "")
-							{
-								$modtime = (stat($dossier.$e))[9];
-								$lastfic = $e;
-							}
-							else
-							{
-								my $curfiletime = (stat($dossier.$e))[9];
-								if ( $curfiletime gt $modtime )
-								{
-									$lastfic = $e;
-								}
-							}
-							
-						}
-						
-					}
-					
+				#if ( $#entrees gt 2 )
+				#{
+				#	foreach $e (@entrees)
+				#	{
+				#		if ( $e ne "." && $e ne ".." )
+				#		{
+				#			if ($lastfic eq "")
+				#			{
+				#				$modtime = (stat($dossier.$e))[9];
+				#				$lastfic = $e;
+				#			}
+				#			else
+				#			{
+				#				my $curfiletime = (stat($dossier.$e))[9];
+				#				if ( $curfiletime gt $modtime )
+				#				{
+				#					$lastfic = $e;
+				#				}
+				#			}
+				#			
+				#		}
+				#		
+				#	}
+				#	
 					# Création ou ouverture du fichier
-					open (FICHIER, "$dossier$lastfic") || die ();
+				#	open (FICHIER, "$dossier$lastfic") || die ();
+				#	
+				#	my $lastline;
+				#		while(<FICHIER>) {
+				#		chomp;
+				#		$lastline = $_ if eof;
+				#	}
+				#	close (FICHIER);
 					
-					my $lastline;
-						while(<FICHIER>) {
-						chomp;
-						$lastline = $_ if eof;
+				#	my @splitlink = split(/;/,$lastline);
+					
+				#	$conn->print("Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] )");
+				#	$conn->privmsg($channel,"Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] ) ");
+				
+
+					my $sql = "SELECT * FROM links WHERE dateandtime=(SELECT MAX(dateandtime) FROM links)";
+					my $statement = $db_handle->prepare($sql);
+					$statement->execute();
+				
+					my $result;	
+					while (my $row_ref = $statement->fetchrow_hashref())
+					{
+						$result = "Dernier lien posté par $row_ref->{user} le $row_ref->{dateandtime} : $row_ref->{title} ( $row_ref->{link} )";
 					}
-					close (FICHIER);
-					
-					my @splitlink = split(/;/,$lastline);
-					
-					$conn->print("Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] )");
-					$conn->privmsg($channel,"Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] ) ");
-				}
+					$conn->print("<$nick>\t| $result");
+					$conn->privmsg($channel,$result);
+				
 			} #Fin !last
 		}		
         	else
