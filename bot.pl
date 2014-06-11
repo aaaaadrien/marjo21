@@ -21,6 +21,8 @@ use Net::SSLeay; # A réinstaller en cas de mise à jour d'OpenSSL !!!
 use LWP::UserAgent;
 use LWP::Protocol::https;
 use HTTP::Request;
+use Class::DBI::mysql;
+
 
 
 my $times = time();
