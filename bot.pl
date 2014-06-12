@@ -23,8 +23,6 @@ use LWP::Protocol::https;
 use HTTP::Request;
 use DBD::mysql;
 
-
-
 my $times = time();
 my $alive = 1;
 
@@ -57,7 +55,6 @@ if ( length($server) < 2 || length($channel) < 2 || length($username) < 2)
 
 # On charge la base de données
 
-my $db_handle = DBI->connect("dbi:mysql:database=marjo21;host=127.0.0.1:3306;user=root;password=root");
 
 
 # Fin de la config
@@ -219,10 +216,11 @@ sub on_public
 							#print FICHIER "$days[$wday] $mday;$hour:$min;$pseudo;$url;$titre \n";
 							#close (FICHIER);
 							
+							my $db_handle = DBI->connect("dbi:mysql:database=marjo21;host=127.0.0.1:3306;user=root;password=root");
 							my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
 							my $statement = $db_handle->prepare($sql);
 							$statement->execute($pseudo,$url,$titre);
-
+							$db_handle->disconnect();
 
 
 						} else {
@@ -290,6 +288,7 @@ sub on_public
 				#	$conn->privmsg($channel,"Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] ) ");
 				
 
+					my $db_handle = DBI->connect("dbi:mysql:database=marjo21;host=127.0.0.1:3306;user=root;password=root");
 					my $sql = "SELECT * FROM links WHERE dateandtime=(SELECT MAX(dateandtime) FROM links)";
 					my $statement = $db_handle->prepare($sql);
 					$statement->execute();
@@ -299,6 +298,7 @@ sub on_public
 					{
 						$result = "Dernier lien posté par $row_ref->{user} le $row_ref->{dateandtime} : $row_ref->{title} ( $row_ref->{link} )";
 					}
+					$db_handle->disconnect();
 					$conn->print("<$nick>\t| $result");
 					$conn->privmsg($channel,$result);
 				
