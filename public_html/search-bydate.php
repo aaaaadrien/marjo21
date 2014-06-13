@@ -24,11 +24,11 @@
 	</head>
 
 	<body>
-Je suis encore en cours de création, il peut rester encore quelques bogues....
+	<?php include('menu.php'); ?>
 	<h1>marjo21 : Recherche par date</h1>
 
 	<div id="selection">
-		<form method="POST" action="<?php echo $_SERVER['REQUEST_URI'] ;?>">
+		<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ;?>">
 			<label>Du :</label>
 			<input type="text" name="start" required="required" class="date"/>
 			<label>au</label>

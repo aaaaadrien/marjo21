@@ -46,6 +46,32 @@ td
 border: 1px solid grey;
 }
 
+#navigation {
+list-style: none;
+margin: -10px auto 0;
+padding: 10px;
+background: black;
+}
+
+#navigation li {
+background: #c00 ;
+color: #fff ;
+border: 1px solid #600 ;
+margin-bottom: 1px ;
+display: inline;
+padding: 5px;
+}
+
+#navigation li a {
+background: #c00 ;
+color: #fff ;
+font: 1em "Trebuchet MS",Arial,sans-serif ;
+line-height: 1em ;
+text-align: center ;
+text-decoration: none ;
+padding: 4px 0 ;
+}
+
 #selection
 {
 width: 500px;

@@ -10,7 +10,7 @@
 	</head>
 
 	<body>
-Je suis encore en cours de création, il peut rester encore quelques bogues....
+	<?php include('menu.php'); ?>
 	<h1>marjo21 : Liens postés</h1>
 
 	<meta  http-equiv="refresh" content="300; url=<?php echo $_SERVER['REQUEST_URI'] ;?>" />
