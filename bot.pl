@@ -183,7 +183,7 @@ sub on_public
 						}
 						
 						
-						if ($res->is_success && $blacklisted eq 0) {
+						if ($res->is_success && $res->title && $blacklisted eq 0) {
 							$conn->privmsg($channel, $res->title); 
 							$conn->print("<$nick>\t| ".$res->title);
 						
