@@ -3,19 +3,23 @@ body
 width: 100%;
 margin-left : auto;
 margin-right: auto;
-background: royalblue;
+background-image: linear-gradient(#D2DDDF, #57A5D7);
+background-repeat: repeat-x;
+background-color: #57A5D7;
 }
 
 h1
 {
 text-align: center;
-color: firebrick;
+color: #bb713a;
+text-shadow: 0px 0px 1px #777;
 }
 
 h2
 {
 text-align: center;
-color: darkslategray
+color: #3584ae;
+text-shadow: 0px 0px 1px #777;
 }
 
 h3
@@ -25,51 +29,52 @@ text-align: center;
 }
 
 table{
-border: 1px solid grey;
+border: 1px #6c6c6c;
+border-collapse:collapse;
 margin: auto;
-background: skyblue;
+background: #ebebeb;
 width: 960px;
 }
 
 tr
 {
-border: 1px solid grey;
+border: 1px solid #6c6c6c;
 }
 
 th
 {
-border: 1px solid grey;
+border: 1px solid #6c6c6c;
 }
 
 td
 {
-border: 1px solid grey;
+border: 1px solid #6c6c6c;
+padding: 2px;
 }
 
 #navigation {
 list-style: none;
 margin: -10px auto 0;
 padding: 10px;
-background: black;
+background-image: linear-gradient(#27abff, #0288ab);
+text-align : center;
 }
 
 #navigation li {
-background: #c00 ;
 color: #fff ;
-border: 1px solid #600 ;
+border: none;
 margin-bottom: 1px ;
 display: inline;
-padding: 5px;
+padding-left: 20px;
+padding-right: 20px;
 }
 
 #navigation li a {
-background: #c00 ;
 color: #fff ;
-font: 1em "Trebuchet MS",Arial,sans-serif ;
-line-height: 1em ;
+font-weight:bold;
+text-shadow: 0px 0px 4px #777;
 text-align: center ;
 text-decoration: none ;
-padding: 4px 0 ;
 }
 
 #selection
@@ -89,6 +94,6 @@ padding: 20px;
 width: 1000px;
 border-width: 1px;
 border-style: solid;
-border-color: black;
-background: white;
+border-color: white;
+background: #efefef;
 }
