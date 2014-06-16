@@ -183,7 +183,7 @@ sub on_public
 						}
 						
 						
-						if ($res->is_success && $res->title && $blacklisted eq 0) {
+						if ($res->is_success && $res->title &&  $blacklisted eq 0) {
 							$conn->privmsg($channel, $res->title); 
 							$conn->print("<$nick>\t| ".$res->title);
 						
@@ -303,12 +303,17 @@ sub on_public
 					$conn->privmsg($channel,$result);
 				
 			} #Fin !last
+		
+			#Il faudrait utiliser switch ....
+			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'ping' && $commande ne 'reload' && $commande ne 'help' )
+			{ 
+				$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
+			}
 		}		
         	else
         	{
 			# On avait un ! en début de ligne, mais non suivi d'un nom de commande
             		$conn->print("Pas une commande");
-			$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
        		}	
 	}
 
