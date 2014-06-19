@@ -97,7 +97,7 @@ sub on_connect
     
     $conn->join($channel);
     #$conn->privmsg($channel, 'Salutations !');
-    #print "<$nick>\t| Salutations !\n";
+    print "$nick started !\n";
     
     $conn->{'connected'} = 1;
     
@@ -219,7 +219,7 @@ sub on_public
 							my $db_handle = DBI->connect("dbi:mysql:database=marjo21;host=127.0.0.1:3306;user=root;password=root");
 							my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
 							my $statement = $db_handle->prepare($sql);
-							$statement->execute($pseudo,$url,$titre);
+							$statement->execute($pseudo,$url,$res->title);
 							$db_handle->disconnect();
 
 
@@ -376,20 +376,20 @@ sub on_msg()
 # On recupere ainsi avec @_[0] le canal ou le pseudo d'où écrire. et avec @_[1] le pseudo de l'émetteur de la commande
 
 sub ping {
-	$conn->privmsg(@_[0],"Je suis toujours là @_[1] ...");
+	$conn->privmsg($_[0],"Je suis toujours là $_[1] ...");
 }
 
 sub help {
 
-	if (@_[0] eq $channel)
+	if ($_[0] eq $channel)
 	{
-		$conn->privmsg($channel,"@_[1] : Je t'ai envoyé un message privé mon petit chou !");
+		$conn->privmsg($channel,"$_[1] : Je t'ai envoyé un message privé mon petit chou !");
 	}
-	$conn->privmsg(@_[1], "!help : Affiche le manuel d'utilisation");
-	$conn->privmsg(@_[1], "!link url : Affiche le titre de la page à l'adresse url ");
-	$conn->privmsg(@_[1], "!last : Affiche des informations sur le dernier lien posté ");
+	$conn->privmsg($_[1], "!help : Affiche le manuel d'utilisation");
+	$conn->privmsg($_[1], "!link url : Affiche le titre de la page à l'adresse url ");
+	$conn->privmsg($_[1], "!last : Affiche des informations sur le dernier lien posté ");
 
-	$conn->privmsg(@_[1], "Pour consulter l'historique des liens postés, c'est par ici : $website");
+	$conn->privmsg($_[1], "Pour consulter l'historique des liens postés, c'est par ici : $website");
 
 
 }
@@ -399,8 +399,8 @@ sub reload {
 	# Pour éviter le déni de service
 	if ( $times+60 lt time() )
 	{
-		$conn->privmsg($channel, "Je recharge mon programme à la demande de @_[1], je reviens...");
-		$conn->print("<$nick>\t| Je recharge mon programme à la demande de @_[1], je reviens...");
+		#$conn->privmsg($channel, "Je recharge mon programme à la demande de $_[1], je reviens...");
+		$conn->print("<$nick>\t| Je recharge mon programme à la demande de $_[1], je reviens...");
 	
 		exec( $^X, $0);
 	}
@@ -409,7 +409,7 @@ sub reload {
 sub blacklistedurl {
 
 # Appeler la fonction avec une URL et renvoie 0 si pas blacklisté, 1 si URL blacklisté.
-my $urlcheck = @_[0];
+my $urlcheck = $_[0];
 my $return = 0;
 
 if ( $blacklists eq 1 )

@@ -77,8 +77,18 @@ text-align: center ;
 text-decoration: none ;
 }
 
-#selection
-{
+
+#forms {
+position:relative;
+height: 32px;
+}
+
+.forms {
+position:absolute;
+height: 32px;
+}
+
+#selection {
 width: 500px;
 margin-left: auto;
 margin-right: auto;
