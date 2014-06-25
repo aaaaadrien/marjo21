@@ -5,13 +5,6 @@ use warnings;
 use threads;
 use DBI;
 
-
-# LIBS
-# perl-Net-IRC-0.79-8.fc20.noarch
-# perl-Net-SSLeay-1.55-4.fc20.x86_64
-# perl-LWP-UserAgent-Determined-1.06-1.fc20.noarch
-# perl-LWP-Protocol-https-6.04-4.fc20.noarch
-
 # It's possible to install modules with "cpan" : cpan -fi LWP::UserAgent
 # To test the resuquest it's possible to use the command : lwp-request -des http://url.com
 
@@ -35,6 +28,11 @@ my $channel;
 my $website;
 my $username;
 my $blacklists = 0;
+my $db;
+my $dbhost;
+my $dbport;
+my $dbuser;
+my $dbpasswd;
 
 while (<CONFIG>) {
 	chomp;
@@ -43,6 +41,11 @@ while (<CONFIG>) {
 	$username = substr($_, 10) if ( $_ =~ /^\$username\=/);
 	$website = substr($_, 9) if ( $_ =~ /^\$website\=/);
 	$blacklists = substr($_, 12) if ( $_ =~ /^\$blacklists\=/);
+	$db = substr($_, 4) if ( $_ =~ /^\$db\=/);
+	$dbhost = substr($_, 8) if ( $_ =~ /^\$dbhost\=/);
+	$dbport = substr($_, 8) if ( $_ =~ /^\$dbport\=/);
+	$dbuser = substr($_, 8) if ( $_ =~ /^\$dbuser\=/);
+	$dbpasswd = substr($_, 10) if ( $_ =~ /^\$dbpasswd\=/);
 }
 
 close (CONFIG);
@@ -158,10 +161,6 @@ sub on_public
 				&ping($channel, $event->{'nick'});
 			}
 
-			if ($commande eq 'reload')
-			{
-				&reload($channel, $event->{'nick'});
-			}
 			if ($commande eq 'link')
 			{
 				my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
@@ -187,39 +186,17 @@ sub on_public
 							$conn->privmsg($channel, $res->title); 
 							$conn->print("<$nick>\t| ".$res->title);
 						
-							#Generation de la date
-							#(my $sec,my $min, my $hour,my $mday,my $mon,my $year,my $wday,my $yday,my $isdst) = localtime();
-							#my @months = qw( Decembre Janvier Fevrier Mars Avril Mai Juin Juillet Aout Septembre Octobre Novembre Decembre );
-							#my @days = qw( Dim Lun Mar Mer Jeu Ven Sam Dim );
-							#$year+=1900;
-							#$mon+=1;
-							
-							# Rectification des heures et minutes
-							#if (length($min) eq 1)
-							#{
-							#	$min = "0".$min;
-							#}
-							#if (length($mon) eq 1)
-							#{
-							#	$mon = "0".$mon;
-							#}
-
-							# Creation du nom du fichier
-							#my $fic = "public_html/logs/$year-$mon--$months[$mon]-$year";
-							
 							my $pseudo = $event->{'nick'};
 							my $titre = $res->title;
+					
+							# Useful for encoding in utf8 in the database.
+							use Encode qw(decode encode);
+							$titre = encode("utf8", decode("iso-8859-1", $titre));
 
-							# Création ou ouverture du fichier
-							#open (FICHIER, ">>$fic") || die ();
-							# On écrit dans le fichier...
-							#print FICHIER "$days[$wday] $mday;$hour:$min;$pseudo;$url;$titre \n";
-							#close (FICHIER);
-							
-							my $db_handle = DBI->connect("dbi:mysql:database=marjo21;host=127.0.0.1:3306;user=root;password=root");
+							my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
 							my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
 							my $statement = $db_handle->prepare($sql);
-							$statement->execute($pseudo,$url,$res->title);
+							$statement->execute($pseudo,$url,$titre);
 							$db_handle->disconnect();
 
 
@@ -240,55 +217,8 @@ sub on_public
 			
 			if ($commande eq 'last')
 			{
-				#my $dossier = "public_html/logs/";
-				#opendir(DOSSIER, $dossier );
-				#my @entrees = readdir(DOSSIER);
-				#closedir(DOSSIER);
-				#my $e;
-				#my $modtime;
-				#my $lastfic = "";
-				
-				#if ( $#entrees gt 2 )
-				#{
-				#	foreach $e (@entrees)
-				#	{
-				#		if ( $e ne "." && $e ne ".." )
-				#		{
-				#			if ($lastfic eq "")
-				#			{
-				#				$modtime = (stat($dossier.$e))[9];
-				#				$lastfic = $e;
-				#			}
-				#			else
-				#			{
-				#				my $curfiletime = (stat($dossier.$e))[9];
-				#				if ( $curfiletime gt $modtime )
-				#				{
-				#					$lastfic = $e;
-				#				}
-				#			}
-				#			
-				#		}
-				#		
-				#	}
-				#	
-					# Création ou ouverture du fichier
-				#	open (FICHIER, "$dossier$lastfic") || die ();
-				#	
-				#	my $lastline;
-				#		while(<FICHIER>) {
-				#		chomp;
-				#		$lastline = $_ if eof;
-				#	}
-				#	close (FICHIER);
-					
-				#	my @splitlink = split(/;/,$lastline);
-					
-				#	$conn->print("Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] )");
-				#	$conn->privmsg($channel,"Le dernier lien posté : Par $splitlink[2] le $splitlink[0] à $splitlink[1] : $splitlink[4] ( $splitlink[3] ) ");
-				
 
-					my $db_handle = DBI->connect("dbi:mysql:database=marjo21;host=127.0.0.1:3306;user=root;password=root");
+					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
 					my $sql = "SELECT * FROM links WHERE dateandtime=(SELECT MAX(dateandtime) FROM links)";
 					my $statement = $db_handle->prepare($sql);
 					$statement->execute();
@@ -305,7 +235,7 @@ sub on_public
 			} #Fin !last
 		
 			#Il faudrait utiliser switch ....
-			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'ping' && $commande ne 'reload' && $commande ne 'help' )
+			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'ping' && $commande ne 'help' )
 			{ 
 				$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 			}
