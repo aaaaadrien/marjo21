@@ -1,3 +1,5 @@
+<br />
+<br />
 <div id="menu">
 	<ul id="navigation">
 		<li><a href="index.php" title="Accueil">Accueil</a></li>

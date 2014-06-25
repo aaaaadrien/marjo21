@@ -26,7 +26,7 @@
 	
 	foreach ( $res as $row )
 	{
-	        echo '<tr><td>'.$row['dateandtime'].'</td><td>'.$row['user'].'</td><td><a href="'.$row['link'].'" tagret="_blank" >'.$row['title'].'</a></td></tr>';
+	        echo '<tr><td>'.$row['dateandtime'].'</td><td><a href="search.php?user='.$row['user'].'">'.$row['user'].'</a></td><td><a href="'.$row['link'].'" target="_blank" >'.$row['title'].'</a></td></tr>';
 	}
 
 	

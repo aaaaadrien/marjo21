@@ -25,7 +25,7 @@
 		$limit = 1;
 		foreach ( $res as $row )
 		{
-		        echo '<tr><td>'.$row['user'].'</td><td><progress value="'.$row['c'].'" max="'.$row['t'].'"></progress></td></tr>';
+		        echo '<tr><td><a href="search.php?user='.$row['user'].'" >'.$row['user'].'</a></td><td><progress value="'.$row['c'].'" max="'.$row['t'].'"></progress></td></tr>';
 			$limit++;
 			if ( $limit > 20 )
 				break;

@@ -50,6 +50,14 @@
 					document.getElementById('keyword').style.visibility="visible";
 				}
 
+				if( !document.getElementById('radiouser').checked && !document.getElementById('radiodate').checked && !document.getElementById('radiosite').checked && !document.getElementById('radiokeyword').checked )
+				{
+					document.getElementById('user').style.visibility="hidden";
+					document.getElementById('date').style.visibility="hidden";
+					document.getElementById('site').style.visibility="hidden";
+					document.getElementById('keyword').style.visibility="hidden";
+				}
+
 			}
 			
 		</script>
@@ -98,20 +106,17 @@
 	
 		</div>
 
-		<script>
-			document.getElementById('user').style.visibility="hidden";
-			document.getElementById('date').style.visibility="hidden";
-			document.getElementById('site').style.visibility="hidden";
-			document.getElementById('keyword').style.visibility="hidden";
-		</script>
-
 		<label>Recherche par :</label> 
-		<input type="radio" name="search" id="radiouser" value="user" onclick="searchradio();" /> Utilisateur
-		<input type="radio" name="search" id="radiodate" value="date" onclick="searchradio();" /> Date
-		<input type="radio" name="search" id="radiosite" value="site" onclick="searchradio();" /> Site
-		<input type="radio" name="search" id="radiokeyword" value="keyword" onclick="searchradio();" /> Mot clés
+		<input type="radio" name="search" id="radiouser" <?php if ( isset ($_GET['user'])) echo 'checked="checked" '; ?>  value="user" onclick="searchradio();" /> Utilisateur
+		<input type="radio" name="search" id="radiodate" <?php if ( isset ($_GET['start'])  && isset ($_GET['end'])) echo 'checked="checked" '; ?> value="date" onclick="searchradio();" /> Date
+		<input type="radio" name="search" id="radiosite" <?php if ( isset ($_GET['site'])) echo 'checked="checked" '; ?> value="site" onclick="searchradio();" /> Site
+		<input type="radio" name="search" id="radiokeyword" <?php if ( isset ($_GET['keywords'])) echo 'checked="checked" '; ?> value="keyword" onclick="searchradio();" /> Mots clés
 
 	</div>
+
+		<script>
+			searchradio();
+		</script>
 
 
 	<div id="historique">
@@ -141,7 +146,7 @@
 
 		foreach ( $res as $row )
 		{
-			echo '<tr><td>'.$row['dateandtime'].'</td><td>'.$row['user'].'</td><td><a href="'.$row['link'].'" tagret="_blank" >'.$row['title'].'</a></td></tr>';
+			echo '<tr><td>'.$row['dateandtime'].'</td><td><a href="search.php?user='.$row['user'].'">'.$row['user'].'</a></td><td><a href="'.$row['link'].'" target="_blank" >'.$row['title'].'</a></td></tr>';
 		}
 	
 		echo '</table>';
@@ -170,7 +175,7 @@
 
 		foreach ( $res as $row )
 		{
-		        echo '<tr><td>'.$row['dateandtime'].'</td><td>'.$row['user'].'</td><td><a href="'.$row['link'].'" tagret="_blank" >'.$row['title'].'</a></td></tr>';
+		        echo '<tr><td>'.$row['dateandtime'].'</td><td><a href="search.php?user='.$row['user'].'">'.$row['user'].'</a></td><td><a href="'.$row['link'].'" target="_blank" >'.$row['title'].'</a></td></tr>';
 		}
 
 		echo '</table>';
@@ -188,7 +193,7 @@
 
 		foreach ( $res as $row )
 		{
-			echo '<tr><td>'.$row['dateandtime'].'</td><td>'.$row['user'].'</td><td><a href="'.$row['link'].'" tagret="_blank" >'.$row['title'].'</a></td></tr>';
+			echo '<tr><td>'.$row['dateandtime'].'</td><td><a href="search.php?user='.$row['user'].'">'.$row['user'].'</a></td><td><a href="'.$row['link'].'" target="_blank" >'.$row['title'].'</a></td></tr>';
 		}
 
 		echo '</table>';
@@ -223,7 +228,7 @@
 
 		foreach ( $res as $row )
 		{
-			echo '<tr><td>'.$row['dateandtime'].'</td><td>'.$row['user'].'</td><td><a href="'.$row['link'].'" tagret="_blank" >'.$row['title'].'</a></td></tr>';
+			echo '<tr><td>'.$row['dateandtime'].'</td><td><a href="search.php?user='.$row['user'].'">'.$row['user'].'</a></td><td><a href="'.$row['link'].'" target="_blank" >'.$row['title'].'</a></td></tr>';
 		}
 
 		echo '</table>';
