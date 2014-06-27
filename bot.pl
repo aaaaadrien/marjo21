@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use threads;
 use DBI;
+use threads::shared;
 
 # It's possible to install modules with "cpan" : cpan -fi LWP::UserAgent
 # To test the resuquest it's possible to use the command : lwp-request -des http://url.com
@@ -18,6 +19,8 @@ use DBD::mysql;
 
 my $times = time();
 my $alive = 1;
+my $heartbeat : shared;
+$heartbeat = 42;
 
 # On charge la config
 my $cfg = "bot.cfg";
@@ -82,6 +85,7 @@ my $conn = $irc->newconn(
 );
 
 
+
 # On installe les fonctions de Hook :
 $conn->add_handler('376', \&on_connect);         # Fin du MOTD => on est connecté
 $conn->add_handler('public', \&on_public);       # Sur le chan
@@ -90,6 +94,35 @@ $conn->add_handler('msg',\&on_msg);		# Via msg privé
 # On lance la connexion et la boucle de gestion des événements :
 $irc->start();
 
+# Fonction pour tester la présence du robot sur IRC
+sub heartbeat
+{
+	my $check = 10;
+	
+	sleep 10;
+	$conn->privmsg($username, '!heartbeat');
+	
+	while ( $alive eq 1 )
+	{
+		sleep $check;
+		$conn->privmsg($username, '!heartbeat');	
+		$conn->print($heartbeat);
+		sleep 1;
+		#open (HEART, "heartbeat");
+		#my $heartbeat;
+		#while(<HEART>) {
+		#	chomp;
+		#	$heartbeat = $_;
+		#}
+		#close (HEART);
+
+		if ( time()-$heartbeat gt 3*$check )
+		{
+		      exec( $^X, $0);
+		}
+		
+	}
+}
 
 
 ## Les fonctions de gestion des événements :
@@ -108,34 +141,6 @@ sub on_connect
 } # Fin on_connect
 
 
-
-sub heartbeat
-{
-	my $check = 10;
-	
-	sleep 10;
-	$conn->privmsg($username, '!heartbeat');
-	
-	while ( $alive eq 1 )
-	{
-		sleep $check;
-		$conn->privmsg($username, '!heartbeat');	
-		sleep 1;
-		open (HEART, "heartbeat");
-		my $heartbeat;
-		while(<HEART>) {
-			chomp;
-			$heartbeat = $_;
-		}
-		close (HEART);
-
-		if ( time()-$heartbeat gt 3*$check )
-		{
-		      exec( $^X, $0);
-		}
-		
-	}
-}
 
 
 sub on_public
@@ -274,9 +279,10 @@ sub on_msg()
 			{
 				if ( $event->{'nick'} eq $username )
 				{
-					open (HEART, ">heartbeat");
-					print HEART time();
-					close (HEART);
+					#open (HEART, ">heartbeat");
+					#print HEART time();
+					#close (HEART);
+					$heartbeat = time();
 				}
 			}
 			
