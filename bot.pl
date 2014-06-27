@@ -106,16 +106,8 @@ sub heartbeat
 	{
 		sleep $check;
 		$conn->privmsg($username, '!heartbeat');	
-		$conn->print($heartbeat);
 		sleep 1;
-		#open (HEART, "heartbeat");
-		#my $heartbeat;
-		#while(<HEART>) {
-		#	chomp;
-		#	$heartbeat = $_;
-		#}
-		#close (HEART);
-
+		
 		if ( time()-$heartbeat gt 3*$check )
 		{
 		      exec( $^X, $0);
@@ -279,9 +271,6 @@ sub on_msg()
 			{
 				if ( $event->{'nick'} eq $username )
 				{
-					#open (HEART, ">heartbeat");
-					#print HEART time();
-					#close (HEART);
 					$heartbeat = time();
 				}
 			}
@@ -335,7 +324,6 @@ sub reload {
 	# Pour éviter le déni de service
 	if ( $times+60 lt time() )
 	{
-		#$conn->privmsg($channel, "Je recharge mon programme à la demande de $_[1], je reviens...");
 		$conn->print("<$nick>\t| Je recharge mon programme à la demande de $_[1], je reviens...");
 	
 		exec( $^X, $0);
