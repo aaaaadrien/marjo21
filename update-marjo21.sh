@@ -9,3 +9,24 @@ chmod +x bot.pl
 
 rm public_html/index.php
 wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/index.php
+
+rm public_html/functions.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/functions.php
+
+rm public_html/about.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/about.php
+
+rm public_html/help.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/help.php
+
+rm public_html/menu.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/menu.php
+
+rm public_html/search.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/search.php
+
+rm public_html/stats.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/stats.php
+
+rm public_html/style.css
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/style.css
