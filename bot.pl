@@ -16,6 +16,7 @@ use LWP::UserAgent;
 use LWP::Protocol::https;
 use HTTP::Request;
 use DBD::mysql;
+use Encode;
 
 my $times = time();
 my $alive = 1;
@@ -187,8 +188,19 @@ sub on_public
 							my $titre = $res->title;
 					
 							# Useful for encoding in utf8 in the database.
-							use Encode qw(decode encode);
-							$titre = encode("utf8", decode("iso-8859-1", $titre));
+							#use Encode qw(decode encode);
+							#$titre = encode("utf8", decode("iso-8859-1", $titre));
+
+							if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
+							        print "UTF-8\n";
+							}
+							else
+							{
+							        print "Not UTF-8\n";
+							        $titre = encode("utf8", decode("iso-8859-1", $titre));
+							}
+
+
 
 							my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
 							my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
