@@ -109,7 +109,7 @@ sub heartbeat
 		$conn->privmsg($username, '!heartbeat');	
 		sleep 1;
 		
-		if ( time()-$heartbeat gt 3*$check )
+		if ( time()-$heartbeat gt 5*$check )
 		{
 		      exec( $^X, $0);
 		}
