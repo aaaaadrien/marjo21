@@ -17,6 +17,7 @@ use LWP::Protocol::https;
 use HTTP::Request;
 use DBD::mysql;
 use Encode;
+use Try::Tiny;
 
 my $times = time();
 my $alive = 1;
@@ -201,13 +202,17 @@ sub on_public
 							}
 
 
-
-							my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-							my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
-							my $statement = $db_handle->prepare($sql);
-							$statement->execute($pseudo,$url,$titre);
-							$db_handle->disconnect();
-
+							try {
+								my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+								my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
+								my $statement = $db_handle->prepare($sql);
+								$statement->execute($pseudo,$url,$titre);
+								$db_handle->disconnect();
+							}
+							catch
+							{
+								$conn->privmsg($channel, "Je ne peux pas indexer ce contenu, je n'arrive pas à joindre la base de données...");
+							}
 
 						} else {
 							print $res->status_line, "\n";
