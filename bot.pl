@@ -227,6 +227,7 @@ sub on_public
 
 								if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
 								        print "UTF-8\n";
+									#$titre = encode("utf8", decode("iso-8859-1", $titre));
 								}
 								else
 								{
@@ -237,8 +238,10 @@ sub on_public
 
 								try {
 									my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+									my $statement = $db_handle->prepare("SET NAMES utf8;");
+									$statement->execute();
 									my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
-									my $statement = $db_handle->prepare($sql);
+									$statement = $db_handle->prepare($sql);
 									$statement->execute($pseudo,$url,$titre);
 									$db_handle->disconnect();
 								}
