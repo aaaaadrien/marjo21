@@ -21,7 +21,7 @@
 
 	echo '<table>';
 	echo '<tr><th>Date et Heure</th><th>Utilisateur</th><th>Lien posté</th></tr>';
-	$res = $pdo->query("SELECT * FROM links ORDER BY dateandtime DESC LIMIT 30");
+	$res = $pdo->query("SELECT * FROM links ORDER BY dateandtime DESC LIMIT 100");
 	$res->setFetchMode(PDO::FETCH_ASSOC);
 	
 	foreach ( $res as $row )
