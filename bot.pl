@@ -38,6 +38,8 @@ my $dbhost;
 my $dbport;
 my $dbuser;
 my $dbpasswd;
+my $administrator;
+my $checkdup;
 
 while (<CONFIG>) {
 	chomp;
@@ -51,6 +53,8 @@ while (<CONFIG>) {
 	$dbport = substr($_, 8) if ( $_ =~ /^\$dbport\=/);
 	$dbuser = substr($_, 8) if ( $_ =~ /^\$dbuser\=/);
 	$dbpasswd = substr($_, 10) if ( $_ =~ /^\$dbpasswd\=/);
+	$checkdup = substr($_, 10) if ( $_ =~ /^\$checkdup\=/);
+	$administrator = substr($_, 15) if ( $_ =~ /^\$administrator\=/);
 }
 
 close (CONFIG);
@@ -305,6 +309,16 @@ sub on_msg()
 			if ($commande eq 'link')
 			{
 				$conn->privmsg($event->{'nick'}, "La commande !help ne fonctionne que sur le canal $channel, pas en message privé ;)");
+			}
+
+			if ($commande eq 'update')
+			{
+				if ("$event->{'nick'}" eq "$administrator")
+				{
+					$conn->privmsg($channel,"Je mets à jour mon programme à la demande de $event->{'nick'} ... je reviens dans un instant ...");
+					exec ( 'sh update-marjo21.sh' );
+					exit (2);
+				}
 			}
 		}
 	}
