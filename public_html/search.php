@@ -218,7 +218,7 @@
 		} else {
 			$sql = $sql."title LIKE \"%".addslashes($keywordssearch)."%\" ";
 		}
-		$sql = $sql."ORDER BY dateandtime DESC LIMIT 30";
+		$sql = $sql."ORDER BY dateandtime DESC LIMIT 100";
 		
 		$res = $pdo->query($sql);	//SELECT * FROM links WHERE title LIKE \"%$keywordssearch%\" ORDER BY dateandtime DESC LIMIT 30");
 		$res->setFetchMode(PDO::FETCH_ASSOC);
