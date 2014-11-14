@@ -283,42 +283,65 @@ sub on_msg()
 		my $commande = ($text =~ m/^!([^ ]*)/)[0];
 		if ($commande ne '')
 		{
-			if ($commande eq 'reload')
+			if ("$commande" eq 'reload')
 			{
-				&reload($event->{'nick'},$event->{'nick'});
+				if ("$administrator" eq "" || "$event->{'nick'}" eq "$administrator")
+				{
+					&reload($event->{'nick'},$event->{'nick'});
+				}
+				else
+				{
+					&forbidden($event->{'nick'},$event->{'nick'});
+				}
 			}
+
+                        if ("$commande" eq 'restart')
+                        {
+                                if ("$administrator" eq "" || "$event->{'nick'}" eq "$administrator")
+                                {
+                                        &restart($event->{'nick'},$event->{'nick'});
+                                }
+                                else
+                                {
+                                        &forbidden($event->{'nick'},$event->{'nick'});
+                                }
+                        }
+
 			
-			if ($commande eq 'heartbeat')
+			if ("$commande" eq 'heartbeat')
 			{
-				if ( $event->{'nick'} eq $username )
+				if ( "$event->{'nick'}" eq "$username" )
 				{
 					$heartbeat = time();
 				}
 			}
 			
-			if ($commande eq 'ping')
+			if ("$commande" eq 'ping')
 			{
 				&ping($event->{'nick'},$event->{'nick'});
 			}
 			
-			if ($commande eq 'help')
+			if ("$commande" eq 'help')
 			{
 				&help($event->{'nick'},$event->{'nick'});
 			}
 			
-			if ($commande eq 'link')
+			if ("$commande" eq 'link')
 			{
 				$conn->privmsg($event->{'nick'}, "La commande !help ne fonctionne que sur le canal $channel, pas en message privé ;)");
 			}
 
-			if ($commande eq 'update')
+			if ("$commande" eq 'update')
 			{
 				if ("$event->{'nick'}" eq "$administrator")
 				{
-					$conn->privmsg($channel,"Je mets à jour mon programme à la demande de $event->{'nick'} ... je reviens dans un instant ...");
-					exec ( 'sh update-marjo21.sh' );
-					exit (2);
+					&update($event->{'nick'},$event->{'nick'});
 				}
+                                else
+                                {
+                                        &forbidden($event->{'nick'},$event->{'nick'});
+                                }
+
 			}
 		}
 	}
@@ -350,6 +373,12 @@ sub help {
 
 }
 
+sub forbidden {
+
+	$conn->privmsg("$_[1]", "Hé, tu te crois où ... tu n'es pas autorisé à exécuter cette commande...");
+
+}
+
 sub reload {
 
 	# Pour éviter le déni de service
@@ -359,6 +388,26 @@ sub reload {
 	
 		exec( $^X, $0);
 	}
+}
+
+sub restart {
+
+        # Pour éviter le déni de service
+        if ( $times+60 lt time() )
+        {
+                $conn->print("<$nick>\t| Je redémarre mon programme à la demande de $_[1], je reviens...");
+
+                exit (3);
+        }
+}
+
+sub update {
+
+	$conn->print("<$nick>\t| Je mets à jour mon programme à la demande de $_[1] ... je reviens dans un instant ...");
+	exec ( 'sh update-marjo21.sh' );
+	exit (2);
+
+
 }
 
 sub blacklistedurl {
