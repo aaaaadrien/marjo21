@@ -174,63 +174,93 @@ sub on_public
 
 
 						my $url = "$params[0]";
-						my $ua = LWP::UserAgent->new(agent => 'Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0', ssl_opts => { verify_hostname => 0 });
-						my $res = $ua->request(HTTP::Request->new(GET => $url));
 						
-						my $blacklisted = &blacklistedurl($url);
-						if ( $blacklisted eq 1)
+						# On verifie si le lien a déjà été posté
+						my $alreadypost = 0;
+						if ( "$checkdup" eq "1" )
 						{
-							$conn->privmsg($channel, "Contenu censuré...");
-							$conn->print("<$nick>\t| Contenu censuré...");
-						}
-						
-						
-						if ($res->is_success && $res->title &&  $blacklisted eq 0) {
-							$conn->privmsg($channel, $res->title); 
-							$conn->print("<$nick>\t| ".$res->title);
-						
-							my $pseudo = $event->{'nick'};
-							my $titre = $res->title;
-					
-							# Useful for encoding in utf8 in the database.
-							#use Encode qw(decode encode);
-							#$titre = encode("utf8", decode("iso-8859-1", $titre));
-
-							if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
-							        print "UTF-8\n";
-							}
-							else
-							{
-							        print "Not UTF-8\n";
-							        $titre = encode("utf8", decode("iso-8859-1", $titre));
-							}
-
-
 							try {
 								my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-								my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
+								my $sql = "SELECT count(*) as count, user, dateandtime FROM links WHERE link=\"$url\"";
 								my $statement = $db_handle->prepare($sql);
-								$statement->execute($pseudo,$url,$titre);
+								$statement->execute();
+
+								my $row_ref = $statement->fetchrow_hashref();
+								if ( "$row_ref->{count}" eq "1" )
+								{
+									$alreadypost = 1;
+									$conn->privmsg($channel, "Le lien a déjà été posté par $row_ref->{user} le $row_ref->{dateandtime} :)");
+								}
 								$db_handle->disconnect();
 							}
-							catch
-							{
+							catch {
+								$alreadypost = 1;
 								$conn->privmsg($channel, "Je ne peux pas indexer ce contenu, je n'arrive pas à joindre la base de données...");
 							}
 
-						} else {
-							print $res->status_line, "\n";
 						}
+
+
+						if ( $alreadypost ne 1 )
+						{
+							my $ua = LWP::UserAgent->new(agent => 'Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0', ssl_opts => { verify_hostname => 0 });
+							my $res = $ua->request(HTTP::Request->new(GET => $url));
+						
+							my $blacklisted = &blacklistedurl($url);
+							if ( $blacklisted eq 1)
+							{
+								$conn->privmsg($channel, "Contenu censuré...");
+								$conn->print("<$nick>\t| Contenu censuré...");
+							}
+						
+						
+							if ($res->is_success && $res->title &&  $blacklisted eq 0) {
+								$conn->privmsg($channel, $res->title); 
+								$conn->print("<$nick>\t| ".$res->title);
+						
+								my $pseudo = $event->{'nick'};
+								my $titre = $res->title;
+					
+								# Useful for encoding in utf8 in the database.
+								#use Encode qw(decode encode);
+								#$titre = encode("utf8", decode("iso-8859-1", $titre));
+
+								if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
+								        print "UTF-8\n";
+								}
+								else
+								{
+								        print "Not UTF-8\n";
+								        $titre = encode("utf8", decode("iso-8859-1", $titre));
+								}
+
+
+								try {
+									my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+									my $sql = "INSERT INTO links(dateandtime,user,link,title) VALUES (NOW(),?,?,?)";
+									my $statement = $db_handle->prepare($sql);
+									$statement->execute($pseudo,$url,$titre);
+									$db_handle->disconnect();
+								}
+								catch
+								{
+									$conn->privmsg($channel, "Je ne peux pas indexer ce contenu, je n'arrive pas à joindre la base de données...");
+								}
+
+							} else {
+								print $res->status_line, "\n";
+							} # Fin if is success
 						
 
-
-                			}
+						} #Fin if alreadypost = 1 
+        	        		}
                 			else
                 			{
-				 		# Un paramètre attendu n'a pas été fourni à la commande...
+						# Un paramètre attendu n'a pas été fourni à la commande...
                     				$conn->print("Un paramètre attendu");
 						$conn->privmsg($channel,"$event->{'nick'} : Une url est attendue après la commande !link. Taper !help pour plus d'informations...");
-                			}
+	                		}
+					
 			}#Fin !link
 			
 			if ($commande eq 'last')
@@ -403,6 +433,7 @@ sub restart {
 
 sub update {
 
+	$conn->privmsg($channel, "Je mets à jour mon programme ... Je reviens dans un court instant :D");
 	$conn->print("<$nick>\t| Je mets à jour mon programme à la demande de $_[1] ... je reviens dans un instant ...");
 	exec ( 'sh update-marjo21.sh' );
 	exit (2);
