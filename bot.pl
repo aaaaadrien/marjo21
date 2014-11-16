@@ -215,26 +215,34 @@ sub on_public
 						
 						
 							if ($res->is_success && $res->title &&  $blacklisted eq 0) {
-								$conn->privmsg($channel, $res->title); 
-								$conn->print("<$nick>\t| ".$res->title);
 						
 								my $pseudo = $event->{'nick'};
 								my $titre = $res->title;
-					
+								
+								
 								# Useful for encoding in utf8 in the database.
 								#use Encode qw(decode encode);
 								#$titre = encode("utf8", decode("iso-8859-1", $titre));
-
 								if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
-								        print "UTF-8\n";
-									#$titre = encode("utf8", decode("iso-8859-1", $titre));
+								#        print "UTF-8\n";
+									try 
+									{
+										$titre = encode("utf8", decode("utf8", $titre));
+									}
+									catch
+									{
+										$titre = encode_utf8($titre);
+									}
 								}
 								else
 								{
-								        print "Not UTF-8\n";
+								#        print "Not UTF-8\n";
 								        $titre = encode("utf8", decode("iso-8859-1", $titre));
 								}
 
+								
+								$conn->privmsg($channel, $titre); 
+								$conn->print("<$nick>\t| ".$titre);
 
 								try {
 									my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
