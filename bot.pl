@@ -18,6 +18,8 @@ use HTTP::Request;
 use DBD::mysql;
 use Encode;
 use Try::Tiny;
+use utf8;
+use open qw(:std :utf8);
 
 my $times = time();
 my $alive = 1;
@@ -223,22 +225,23 @@ sub on_public
 								# Useful for encoding in utf8 in the database.
 								#use Encode qw(decode encode);
 								#$titre = encode("utf8", decode("iso-8859-1", $titre));
-								if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
+								#if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
 								#        print "UTF-8\n";
-									try 
-									{
-										$titre = encode("utf8", decode("utf8", $titre));
-									}
-									catch
-									{
-										$titre = encode_utf8($titre);
-									}
-								}
-								else
-								{
+								#	try 
+								#	{
+								#		$titre = encode("utf8", decode("utf8", $titre));
+								#	}
+								#	catch
+								#	{
+								#		$titre = encode_utf8($titre);
+								#	}
+								#}
+								#else
+								#{
 								#        print "Not UTF-8\n";
-								        $titre = encode("utf8", decode("iso-8859-1", $titre));
-								}
+								#        $titre = encode("utf8", decode("iso-8859-1", $titre));
+								#}
+								$titre =~ utf8::decode($titre);
 
 								
 								$conn->privmsg($channel, $titre); 
