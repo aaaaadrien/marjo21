@@ -219,30 +219,31 @@ sub on_public
 							if ($res->is_success && $res->title &&  $blacklisted eq 0) {
 						
 								my $pseudo = $event->{'nick'};
-								my $titre = $res->title;
 								
+								my $titre = $res->title;
+							
+								# Substitute some characters ...
+								$titre =~ s/\’/\'/;	
 								
 								# Useful for encoding in utf8 in the database.
-								#use Encode qw(decode encode);
 								#$titre = encode("utf8", decode("iso-8859-1", $titre));
-								#if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
-								#        print "UTF-8\n";
-								#	try 
-								#	{
-								#		$titre = encode("utf8", decode("utf8", $titre));
-								#	}
-								#	catch
-								#	{
-								#		$titre = encode_utf8($titre);
-								#	}
-								#}
-								#else
-								#{
-								#        print "Not UTF-8\n";
-								#        $titre = encode("utf8", decode("iso-8859-1", $titre));
-								#}
-								$titre =~ utf8::decode($titre);
-
+								if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
+								        print "UTF-8\n";
+									try 
+									{
+										$titre = encode("utf8", decode("utf8", $titre));
+									}
+									catch
+									{
+										$titre = encode_utf8($titre);
+									}
+								}
+								else
+								{
+								        print "Not UTF-8\n";
+								        $titre = encode("utf8", decode("iso-8859-1", $titre));
+								}
+									
 								
 								$conn->privmsg($channel, $titre); 
 								$conn->print("<$nick>\t| ".$titre);
@@ -426,7 +427,7 @@ sub forbidden {
 sub reload {
 
 	# Pour éviter le déni de service
-	if ( $times+60 lt time() )
+	if ( $times+0 lt time() )
 	{
 		$conn->print("<$nick>\t| Je recharge mon programme à la demande de $_[1], je reviens...");
 	
@@ -437,7 +438,7 @@ sub reload {
 sub restart {
 
         # Pour éviter le déni de service
-        if ( $times+60 lt time() )
+        if ( $times+0 lt time() )
         {
                 $conn->print("<$nick>\t| Je redémarre mon programme à la demande de $_[1], je reviens...");
 
