@@ -361,9 +361,9 @@ sub on_msg()
 				}
 			}
 			
-			if ("$commande" eq 'ping')
+			if ("$commande" eq 'bonjour')
 			{
-				&ping($event->{'nick'},$event->{'nick'});
+				&bonjour($event->{'nick'},$event->{'nick'});
 			}
 			
 			if ("$commande" eq 'help')
@@ -399,8 +399,8 @@ sub on_msg()
 # &fonction($event->{'nick'},$event->{'nick'}); pour les messages privés
 # On recupere ainsi avec @_[0] le canal ou le pseudo d'où écrire. et avec @_[1] le pseudo de l'émetteur de la commande
 
-sub ping {
-	$conn->privmsg($_[0],"Je suis toujours là $_[1] ...");
+sub bonjour {
+	$conn->privmsg($_[0],"Bonjour $_[1] ...");
 }
 
 sub help {
