@@ -161,9 +161,9 @@ sub on_public
 				&help($channel, $event->{'nick'});
 			} 
 		
-			if ($commande eq 'ping')
+			if ($commande eq 'bonjour')
 			{
-				&ping($channel, $event->{'nick'});
+				&bonjour($channel, $event->{'nick'});
 			}
 
 			if ($commande eq 'link')
@@ -298,7 +298,7 @@ sub on_public
 			} #Fin !last
 		
 			#Il faudrait utiliser switch ....
-			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'ping' && $commande ne 'help' )
+			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'bonjour' && $commande ne 'help' )
 			{ 
 				$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 			}
