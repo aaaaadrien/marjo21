@@ -388,6 +388,14 @@ sub on_msg()
                                 }
 
 			}
+
+			if ("$commande" eq 'say')
+			{
+                                if ("$event->{'nick'}" eq "$administrator")
+                                {
+                                        &say($channel,$text);
+                                }
+			}
 		}
 	}
 
@@ -454,6 +462,12 @@ sub update {
 	exit (2);
 
 
+}
+
+sub say {
+	
+	my $text = substr($_[1], 5);
+	$conn->privmsg($_[0],"$text");
 }
 
 sub blacklistedurl {
