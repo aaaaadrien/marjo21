@@ -19,7 +19,7 @@ cpan -fi Try::Tiny
 STARTUP SCRIPT FOR MARJO21
 ---------------------------
 
-For Gentoo : Create /etc/local.d/21-marjo21.start :
+For Gentoo : Create `/etc/local.d/21-marjo21.start` :
 
 ```bash
 rm -rf /home/marjo21/.screen/*
