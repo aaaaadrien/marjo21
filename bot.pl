@@ -474,8 +474,8 @@ sub restart {
 
 sub update {
 
-	#$conn->privmsg($channel, "Je mets à jour mon programme ... Je reviens dans un court instant :D");
-	$conn->print("<$nick>\t| Je mets à jour mon programme à la demande de $_[1] ... je reviens dans un instant ...");
+	$conn->privmsg($channel, "Démarrage de la mise à jour ... Je reviens dans un court instant :D");
+	$conn->print("<$nick>\t| Démarrage de la mise à jour sur demande de $_[1] ");
 	exec ( 'sh update-marjo21.sh' );
 	exit (2);
 
