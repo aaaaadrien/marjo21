@@ -224,47 +224,50 @@ sub on_public
 						
 								my $type = $res->content_type;
 								my $isimage = 0;
+								my $ispdf = 0;
 								
 								if ( $type =~ /image/) {
-									$titre = $url;
+									my @fic = split /\//, $url;
+									$titre = "IMAGE : $fic[-1] - $url";
 									$isimage = 1;
-									print "coucou";
 								}
 								else
 								{
-									# Substitute some characters ...
-									$titre =~ s/\’/\'/;	
-								
-									# Useful for encoding in utf8 in the database.
-									#$titre = encode("utf8", decode("iso-8859-1", $titre));
-									if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
-									        print "UTF-8\n";
-										try 
-										{
-											$titre = encode("utf8", decode("utf8", $titre));
-										}
-										catch
-										{
-											$titre = encode_utf8($titre);
-										}
-									}
+									 if ( $type =~ /pdf/ )
+									 {
+								                 my @fic = split /\//, $url;
+								                 $titre = "PDF : $fic[-1] - $url";
+								                 $ispdf = 1;
+								         }
 									else
 									{
-									        print "Not UTF-8\n";
-									        $titre = encode("utf8", decode("iso-8859-1", $titre));
+										# Substitute some characters ...
+										$titre =~ s/\’/\'/;	
+									
+										# Useful for encoding in utf8 in the database.
+										#$titre = encode("utf8", decode("iso-8859-1", $titre));
+										if (eval { decode_utf8($res->title, Encode::FB_CROAK); 1 }) {
+										        print "UTF-8\n";
+											try 
+											{
+												$titre = encode("utf8", decode("utf8", $titre));
+											}
+											catch
+											{
+												$titre = encode_utf8($titre);
+											}
+										}
+										else
+										{
+										        print "Not UTF-8\n";
+										        $titre = encode("utf8", decode("iso-8859-1", $titre));
+										}
 									}
 								}
-									
-								if ( "$isimage" eq "1" )
-								{
-									$conn->privmsg($channel, "Le lien de l'image est indexé !");
-									$conn->print("<$nick>\t| Le lien de l'image est indexé !");
-								}
-								else
-								{
-									$conn->privmsg($channel, $titre); 
-									$conn->print("<$nick>\t| ".$titre);
-								}
+
+
+								$conn->privmsg($channel, $titre); 
+								$conn->print("<$nick>\t| ".$titre);
 
 								try {
 									my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
