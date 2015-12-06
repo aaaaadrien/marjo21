@@ -183,7 +183,7 @@ sub on_public
 						{
 							try {
 								my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-								my $sql = "SELECT count(*) as count, user, dateandtime FROM links WHERE link=\"$url\"";
+								my $sql = "SELECT count(*) as count, user, dateandtime, title FROM links WHERE link=\"$url\"";
 								my $statement = $db_handle->prepare($sql);
 								$statement->execute();
 
@@ -191,7 +191,7 @@ sub on_public
 								if ( "$row_ref->{count}" eq "1" )
 								{
 									$alreadypost = 1;
-									$conn->privmsg($channel, "Le lien a déjà été posté par $row_ref->{user} le $row_ref->{dateandtime} :)");
+									$conn->privmsg($channel, "$row_ref->{title} (déjà posté par $row_ref->{user} le $row_ref->{dateandtime})");
 								}
 								$statement->finish;
 								$db_handle->disconnect();
