@@ -191,7 +191,7 @@ sub on_public
 								if ( "$row_ref->{count}" eq "1" )
 								{
 									$alreadypost = 1;
-									$conn->privmsg($channel, "$row_ref->{title} (déjà posté par $row_ref->{user} le $row_ref->{dateandtime})");
+									$conn->privmsg($channel, decode_utf8($row_ref->{title})." (déjà posté par $row_ref->{user} le $row_ref->{dateandtime})");
 								}
 								$statement->finish;
 								$db_handle->disconnect();
