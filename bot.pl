@@ -193,6 +193,7 @@ sub on_public
 									$alreadypost = 1;
 									$conn->privmsg($channel, "Le lien a déjà été posté par $row_ref->{user} le $row_ref->{dateandtime} :)");
 								}
+								$statement->finish;
 								$db_handle->disconnect();
 							}
 							catch {
