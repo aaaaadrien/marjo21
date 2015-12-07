@@ -266,7 +266,10 @@ sub on_public
 									}
 								}
 
-
+								if ( $titre eq '' )
+								{
+									$titre = "Pas de titre : $url";
+								}
 								$conn->privmsg($channel, $titre); 
 								$conn->print("<$nick>\t| ".$titre);
 
