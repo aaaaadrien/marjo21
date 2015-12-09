@@ -314,7 +314,7 @@ sub on_public
 					my $result;	
 					while (my $row_ref = $statement->fetchrow_hashref())
 					{
-						$result = "Dernier lien posté par $row_ref->{user} le $row_ref->{dateandtime} : $row_ref->{title} ( $row_ref->{link} )";
+						$result = "Dernier lien posté par $row_ref->{user} le $row_ref->{dateandtime} : ".decode_utf8($row_ref->{title})." ( $row_ref->{link} )";
 					}
 					$db_handle->disconnect();
 					$conn->print("<$nick>\t| $result");
