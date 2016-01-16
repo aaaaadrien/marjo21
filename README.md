@@ -15,6 +15,8 @@ cpan -fi LWP::UserAgent LWP::Protocol::https HTTP::Request
 
 cpan -fi Try::Tiny
 
+cpan -fi DBD::mysql
+
 
 STARTUP SCRIPT FOR MARJO21
 ---------------------------
