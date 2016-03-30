@@ -178,7 +178,7 @@ sub on_public
 						my $url = "$params[0]";
 						
 						my $prot = substr($url, 0, 3);
-						if ( "$prot" ne "htt" || "$prot" ne "ftp" )
+						if ( "$prot" ne "htt" && "$prot" ne "ftp" )
 						{
 							$url="http://".$url;
 						}
