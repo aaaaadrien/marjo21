@@ -328,9 +328,39 @@ sub on_public
 					$conn->privmsg($channel,$result);
 				
 			} #Fin !last
+
+			if ($commande eq 'search')
+			{
+				my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
+				if (defined($params[0]) && $params[0] ne '')
+				{
+					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+					my $sql = "SELECT * FROM links WHERE title LIKE '%$params[0]%' ORDER BY id DESC LIMIT 5";
+					my $statement = $db_handle->prepare($sql);
+					$statement->execute();
+
+					my $num = $statement->rows;
+
+					$conn->privmsg($channel,"$num résultats (MAX 5 pour le moment) : ");
+
+					my $result;
+					while (my $row_ref = $statement->fetchrow_hashref())
+					{
+						$result = decode_utf8($row_ref->{title})." ( $row_ref->{link} ) par $row_ref->{user} le $row_ref->{dateandtime}";
+						$conn->print("<$nick>\t| $result");
+						$conn->privmsg($channel,$result);
+					}
+					$db_handle->disconnect();
+				}
+				else
+				{
+					$conn->print("Un paramètre attendu");
+					$conn->privmsg($channel,"$event->{'nick'} : Une url est attendue après la commande !link. Taper !help pour plus d'informations...");
+				}
+			}
 		
 			#Il faudrait utiliser switch ....
-			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'bonjour' && $commande ne 'help' )
+			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search')
 			{ 
 				$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 			}
