@@ -335,18 +335,36 @@ sub on_public
 				if (defined($params[0]) && $params[0] ne '')
 				{
 					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-					my $sql = "SELECT * FROM links WHERE title LIKE '%$params[0]%' ORDER BY id DESC LIMIT 5";
+					my $sql = "SELECT * FROM links WHERE title LIKE '%$params[0]%' ORDER BY id";
 					my $statement = $db_handle->prepare($sql);
 					$statement->execute();
 
 					my $num = $statement->rows;
 
-					$conn->privmsg($channel,"$num résultats (MAX 5 pour le moment) : ");
-
 					my $result;
-					while (my $row_ref = $statement->fetchrow_hashref())
+					
+					if ( $num lt 6 )
 					{
-						$result = decode_utf8($row_ref->{title})." ( $row_ref->{link} ) par $row_ref->{user} le $row_ref->{dateandtime}";
+						if ( $num eq 0 )
+						{
+							$result = "Il n'y a pas de résultats mon p'tit chou !";
+							$conn->print("<$nick>\t| $result");
+							$conn->privmsg($channel,$result);
+						}
+						else
+						{
+							while (my $row_ref = $statement->fetchrow_hashref())
+							{
+								$result = decode_utf8($row_ref->{title})." ( $row_ref->{link} ) par $row_ref->{user} le $row_ref->{dateandtime}";
+								$conn->print("<$nick>\t| $result");
+								$conn->privmsg($channel,$result);
+							}
+						}
+					}
+					else
+					{
+						my $urlgen = $website."/search.php?keywords=".$params[0];
+						$result = "Il y a plus de 5 résultats. Consulte ta recherche sur $urlgen";
 						$conn->print("<$nick>\t| $result");
 						$conn->privmsg($channel,$result);
 					}
