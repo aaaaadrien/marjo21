@@ -138,7 +138,7 @@
 	if ( isset($_GET['user']) && preg_match('/^[A-Za-z0-9_]+$/',$_GET['user']) )
 	{
 		$usersearch = $_GET['user'];
-		$res = $pdo->query("SELECT * FROM links WHERE user = \"$usersearch\" ORDER BY dateandtime DESC LIMIT 30");
+		$res = $pdo->query("SELECT * FROM links WHERE user = \"$usersearch\" ORDER BY dateandtime DESC LIMIT 100");
 		$res->setFetchMode(PDO::FETCH_ASSOC);
 
 		echo '<table>';
@@ -167,7 +167,7 @@
 		
 	if ( isset($startdate) && isset($enddate) && $startdate < $enddate )
 	{
-			$res = $pdo->query("SELECT * FROM links WHERE dateandtime BETWEEN \"$startdate 00:00:00\" AND \"$enddate 23:59:59\" ORDER BY dateandtime DESC LIMIT 30");
+			$res = $pdo->query("SELECT * FROM links WHERE dateandtime BETWEEN \"$startdate 00:00:00\" AND \"$enddate 23:59:59\" ORDER BY dateandtime DESC LIMIT 100");
 			$res->setFetchMode(PDO::FETCH_ASSOC);
 		
 		echo '<table>';
@@ -185,7 +185,7 @@
 	if ( isset($_GET['site']) && preg_match('/^[A-Za-z0-9-.]+$/',$_GET['site']) )
 	{
 		$sitesearch = $_GET['site'];
-		$res = $pdo->query("SELECT * FROM links WHERE link LIKE \"%$sitesearch%\" ORDER BY dateandtime DESC LIMIT 30");
+		$res = $pdo->query("SELECT * FROM links WHERE link LIKE \"%$sitesearch%\" ORDER BY dateandtime DESC LIMIT 100");
 		$res->setFetchMode(PDO::FETCH_ASSOC);
 
 		echo '<table>';
