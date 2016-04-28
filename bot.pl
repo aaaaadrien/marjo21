@@ -343,9 +343,9 @@ sub on_public
 
 					my $result;
 					
-					if ( $num lt 6 )
+					if ( $num < 6 )
 					{
-						if ( $num eq 0 )
+						if ( $num == 0 )
 						{
 							$result = "Il n'y a pas de résultats mon p'tit chou !";
 							$conn->print("<$nick>\t| $result");
