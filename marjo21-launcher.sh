@@ -5,6 +5,6 @@ cd "$path"
 
 while :
 do
-	./bot.pl
+	./bot.pl >> bot.log
 	sleep 5
 done
