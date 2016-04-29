@@ -205,7 +205,7 @@ sub on_public
 							}
 							catch {
 								$alreadypost = 1;
-								$conn->privmsg($channel, "Je ne peux pas indexer ce contenu, je n'arrive pas à joindre la base de données...");
+								$conn->privmsg($channel, "Je ne peux pas vérifier si le lien a déjà été posté, je n'arrive pas à joindre la base de données...");
 							}
 
 						}
