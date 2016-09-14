@@ -166,7 +166,7 @@ sub on_public
 				&bonjour($channel, $event->{'nick'});
 			}
 
-			if ($commande eq 'link' or $commande eq '!')
+			if ($commande eq 'link' or $commande eq 'l')
 			{
 				my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
 					if (defined($params[0]) && $params[0] ne '')
@@ -378,7 +378,7 @@ sub on_public
 			}
 		
 			#Il faudrait utiliser switch ....
-			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search')
+			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search')
 			{ 
 				$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 			}
