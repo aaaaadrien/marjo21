@@ -166,7 +166,7 @@ sub on_public
 				&bonjour($channel, $event->{'nick'});
 			}
 
-			if ($commande eq 'link' || $commande eq '!')
+			if ($commande eq 'link' or $commande eq '!')
 			{
 				my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
 					if (defined($params[0]) && $params[0] ne '')
