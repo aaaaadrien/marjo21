@@ -3,34 +3,39 @@
 use strict;
 use warnings;
 use threads;
-use DBI;
 use threads::shared;
 
-# It's possible to install modules with "cpan" : cpan -fi LWP::UserAgent
-# To test the resuquest it's possible to use the command : lwp-request -des http://url.com
+package Marjo21;
+
+use DBI;
+use Encode;
+use utf8;
+use open qw(:std :utf8);
 
 # Liste des librairies utilisées :
-use Net::IRC;
+use Net::IRC; # old IRC module
+use base qw( Bot::BasicBot ); # new IRC module
 use Net::SSLeay; # A réinstaller en cas de mise à jour d'OpenSSL !!!
 use LWP::UserAgent;
 use LWP::Protocol::https;
 use HTTP::Request;
 use DBD::mysql;
-use Encode;
 use Try::Tiny;
-use utf8;
-use open qw(:std :utf8);
+
 
 my $times = time();
 my $alive = 1;
 my $heartbeat : shared;
 $heartbeat = 42;
+my $self : shared;
+
 
 # On charge la config
 my $cfg = "bot.cfg";
 
 open (CONFIG, $cfg);
 my $server;
+my $ircencoding;
 my $channel;
 my $website;
 my $username;
@@ -46,6 +51,7 @@ my $checkdup;
 while (<CONFIG>) {
 	chomp;
 	$server = substr($_, 8) if ( $_ =~ /^\$server\=/);
+	$ircencoding = substr($_, 13) if ( $_ =~ /^\$ircencoding\=/);
 	$channel = substr($_, 9) if ( $_ =~ /^\$channel\=/);
 	$username = substr($_, 10) if ( $_ =~ /^\$username\=/);
 	$website = substr($_, 9) if ( $_ =~ /^\$website\=/);
@@ -78,29 +84,38 @@ my $nick = $username;
 
 # Informations concernant le Bot :
 my $ircname = 'marjo21 Web Link';
-my $version = '1.0';
+my $version = '2.0';
 
 # On crée l'objet qui nous permet de nous connecter à IRC :
-my $irc = new Net::IRC;
+#my $irc = new Net::IRC;
 
 # On crée l'objet de connexion à IRC :
-my $conn = $irc->newconn(
-    'Server'      => $server,
-    'Port'        => 6667, 
-    'Nick'        => $nick,
-    'Ircname'     => $ircname,
-    'Username'    => $username
-);
+my $conn; #A supprimer
+#my $conn = $irc->newconn(
+#    'Server'      => $server,
+#    'Port'        => 6667, 
+#    'Nick'        => $nick,
+#    'Ircname'     => $ircname,
+#    'Username'    => $username
+#);
+
+# On crée l'objet qui nous permet de nous connecter à IRC :
+Marjo21->new(
+	server => $server,
+	channels => [ $channel ],
+	nick => $nick,
+	charset => $ircencoding,
+)->run();
 
 
 
 # On installe les fonctions de Hook :
-$conn->add_handler('376', \&on_connect);         # Fin du MOTD => on est connecté
-$conn->add_handler('public', \&on_public);       # Sur le chan
-$conn->add_handler('msg',\&on_msg);		# Via msg privé
+#$conn->add_handler('376', \&on_connect);         # Fin du MOTD => on est connecté
+#$conn->add_handler('public', \&on_public);       # Sur le chan
+#$conn->add_handler('msg',\&on_msg);		# Via msg privé
 
 # On lance la connexion et la boucle de gestion des événements :
-$irc->start();
+#$irc->start();
 
 # Fonction pour tester la présence du robot sur IRC
 sub heartbeat
@@ -127,27 +142,28 @@ sub heartbeat
 
 ## Les fonctions de gestion des événements :
 
-sub on_connect
-{
-    my ($conn, $event) = @_;
+#sub on_connect
+#{
+#    my ($conn, $event) = @_;
     
-    $conn->join($channel);
+#    $conn->join($channel);
     #$conn->privmsg($channel, 'Salutations !');
-    print "$nick started !\n";
+#    print "$nick started !\n";
     
-    $conn->{'connected'} = 1;
+#    $conn->{'connected'} = 1;
     
-    my $thrheartbeat = threads->new(\&heartbeat);
-} # Fin on_connect
+#    my $thrheartbeat = threads->new(\&heartbeat);
+#} # Fin on_connect
 
 
 
 
-sub on_public
+#sub on_public
+sub said
 {
-	my ($conn, $event) = @_;
-	my $text = $event->{'args'}[0];
-    	$conn->print("<" . $event->{'nick'} . ">\t| $text");
+	my ($self, $event) = @_;
+	my $text = $event->{body};
+    	#$conn->print("<" . $event->{'nick'} . ">\t| $text");
    
     	if (substr($text, 0, 1) eq '!')
     	{
@@ -158,16 +174,54 @@ sub on_public
             		
 			if ($commande eq 'help')
 			{
-				&help($channel, $event->{'nick'});
-			} 
+				#&help($channel, $event->{'nick'});
+				if ($event->{channel} ne 'msg')
+				{
+					$self->say(
+						channel => $channel,
+						body => "$event->{who}: Je t'ai envoyé un message prové mon p'tit chou ! :-)",
+					);
+				}
+				$self->say(
+					who => $event->{who},
+					channel => "msg",
+					body => "Aide : !help => Affiche le manuel d'utilisation -- !link http://url => Affiche le titre de la page à l'adresse url -- !last => Affiche des informations sur le dernier lien posté. Pour consulter l'historique des liens postés, c'est par ici : $website",
+				);
+				
+			}
 		
 			if ($commande eq 'bonjour')
 			{
-				&bonjour($channel, $event->{'nick'});
+				#&bonjour($channel, $event->{'nick'});
+				if ( $event->{channel} eq 'msg' )
+				{
+					$self->say(
+						who => $event->{who},
+						channel => "msg",
+						body => "Bonjour $event->{who}",
+					);
+				}
+				else
+				{
+					$self->say(
+						channel => $channel,
+						body => "Bonjour $event->{who}",
+					);
+				}
 			}
 
 			if ($commande eq 'link' or $commande eq 'l')
 			{
+			if ( $event->{channel} eq 'msg' ) # Si le msg !link est passé par MP, on ne traite pas mais on averti quand même
+			{
+				$self->say(
+					who => $event->{who},
+					channel => "msg",
+					body => "La commande !link ne fonctionne que sur le canal $channel ! Pas de passage de liens en douce...",
+				);
+			}
+			else # La commande est passée sur le canal
+			{ 
 				my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
 					if (defined($params[0]) && $params[0] ne '')
 			               	{
@@ -198,14 +252,22 @@ sub on_public
 								if ( "$row_ref->{count}" eq "1" )
 								{
 									$alreadypost = 1;
-									$conn->privmsg($channel, decode_utf8($row_ref->{title})." (déjà posté par $row_ref->{user} le $row_ref->{dateandtime})");
+									#$conn->privmsg($channel, decode_utf8($row_ref->{title})." (déjà posté par $row_ref->{user} le $row_ref->{dateandtime})");
+									$self->say(
+										channel => "$channel",
+										body => "Tu arrives en retard ... $row_ref->{user} l'a fait avant toi le $row_ref->{dateandtime} ! Pour info : $row_ref->{title} ",
+									);
 								}
 								$statement->finish;
 								$db_handle->disconnect();
 							}
 							catch {
 								$alreadypost = 1;
-								$conn->privmsg($channel, "Je ne peux pas vérifier si le lien a déjà été posté, je n'arrive pas à joindre la base de données...");
+								#$conn->privmsg($channel, "Je ne peux pas vérifier si le lien a déjà été posté, je n'arrive pas à joindre la base de données...");
+								$self->say(
+									channel => "$channel",
+									body => "Je ne peux pas joindre la base...",
+								);
 							}
 
 						}
@@ -219,14 +281,18 @@ sub on_public
 							my $blacklisted = &blacklistedurl($url);
 							if ( $blacklisted eq 1)
 							{
-								$conn->privmsg($channel, "Contenu censuré...");
-								$conn->print("<$nick>\t| Contenu censuré...");
+								#$conn->privmsg($channel, "Contenu censuré...");
+								#$conn->print("<$nick>\t| Contenu censuré...");
+								$self->say(
+									channel => "$channel",
+									body =>  "Contenu trop choquant...",
+								);
 							}
 						
 						
 							if ($res->is_success &&  $blacklisted eq 0) {
 						
-								my $pseudo = $event->{'nick'};
+								my $pseudo = $event->{'who'};
 								
 								my $titre = $res->title;
 						
@@ -269,7 +335,7 @@ sub on_public
 										{
 										        print "Not UTF-8\n";
 										        $titre = encode("utf8", decode("iso-8859-1", $titre));
-										}
+										}	
 									}
 								}
 
@@ -277,8 +343,12 @@ sub on_public
 								{
 									$titre = "Pas de titre : $url";
 								}
-								$conn->privmsg($channel, $titre); 
-								$conn->print("<$nick>\t| ".$titre);
+								#$conn->privmsg($channel, $titre); 
+								#$conn->print("<$nick>\t| ".$titre);
+								$self->say(
+									channel => "$channel",
+									body =>  "$titre",
+								);
 
 								try {
 									my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
@@ -291,7 +361,11 @@ sub on_public
 								}
 								catch
 								{
-									$conn->privmsg($channel, "Je ne peux pas indexer ce contenu, je n'arrive pas à joindre la base de données...");
+									#$conn->privmsg($channel, "Je ne peux pas indexer ce contenu, je n'arrive pas à joindre la base de données...");
+									$self->say(
+										channel => "$channel",
+										body =>   "Je ne peux pas indexer ce contenu, je n'arrive pas à joindre la base...",
+									);
 								}
 
 							} else {
@@ -304,11 +378,15 @@ sub on_public
                 			else
                 			{
 						# Un paramètre attendu n'a pas été fourni à la commande...
-                    				$conn->print("Un paramètre attendu");
-						$conn->privmsg($channel,"$event->{'nick'} : Une url est attendue après la commande !link. Taper !help pour plus d'informations...");
+                    				#$conn->print("Un paramètre attendu");
+						#$conn->privmsg($channel,"$event->{'nick'} : Une url est attendue après la commande !link. Taper !help pour plus d'informations...");
+						$self->say(
+							channel => "$channel",
+							body =>  "$event->{'who'} : Une url est attendue avec la commande !link. Taper !help pour plus d'informations...",
+						);
 	                		}
-					
-			}#Fin !link
+			} # Fin de la condition "si MP"		
+			} # Fin !link
 			
 			if ($commande eq 'last')
 			{
@@ -321,11 +399,27 @@ sub on_public
 					my $result;	
 					while (my $row_ref = $statement->fetchrow_hashref())
 					{
-						$result = "Dernier lien posté par $row_ref->{user} le $row_ref->{dateandtime} : ".decode_utf8($row_ref->{title})." ( $row_ref->{link} )";
+						$result = "Dernier lien par $row_ref->{user} le $row_ref->{dateandtime} : $row_ref->{title} ( $row_ref->{link} )";
+					}
+					#$conn->print("<$nick>\t| $result");
+					#$conn->privmsg($channel,$result);
+					
+					if ( $event->{channel} eq 'msg')
+					{
+						$self->say(
+							who => $event->{who},
+							channel => "msg",
+							body =>  "$result",
+						);
+					}
+					else
+					{
+						$self->say(
+							channel => "$channel",
+							body =>  "$result",
+						);
 					}
 					$db_handle->disconnect();
-					$conn->print("<$nick>\t| $result");
-					$conn->privmsg($channel,$result);
 				
 			} #Fin !last
 
@@ -348,16 +442,46 @@ sub on_public
 						if ( $num == 0 )
 						{
 							$result = "Il n'y a pas de résultats mon p'tit chou !";
-							$conn->print("<$nick>\t| $result");
-							$conn->privmsg($channel,$result);
+							#$conn->print("<$nick>\t| $result");
+							#$conn->privmsg($channel,$result);
+							if ( $event->{channel} eq 'msg' )
+							{
+								$self->say(
+									who => $event->{who},
+									channel => "msg",
+									body =>  "$result",
+								);
+							}
+							else
+							{
+								$self->say(
+									channel => "$channel",
+									body =>  "$result",
+								);
+							}
 						}
 						else
 						{
 							while (my $row_ref = $statement->fetchrow_hashref())
 							{
-								$result = decode_utf8($row_ref->{title})." ( $row_ref->{link} ) par $row_ref->{user} le $row_ref->{dateandtime}";
-								$conn->print("<$nick>\t| $result");
-								$conn->privmsg($channel,$result);
+								$result = "$row_ref->{title} ( $row_ref->{link} ) par $row_ref->{user} le $row_ref->{dateandtime}";
+								#$conn->print("<$nick>\t| $result");
+								#$conn->privmsg($channel,$result);
+								if ( $event->{channel} eq 'msg' )
+								{
+									$self->say(
+										who => $event->{who},
+										channel => "msg",
+										body =>  "$result",
+									);
+								}
+								else
+								{
+									$self->say(
+										channel => "$channel",
+										body =>  "$result",
+									);
+								}
 							}
 						}
 					}
@@ -365,42 +489,67 @@ sub on_public
 					{
 						my $urlgen = $website."/search.php?keywords=".$params[0];
 						$result = "Il y a plus de 5 résultats. Consulte ta recherche sur $urlgen";
-						$conn->print("<$nick>\t| $result");
-						$conn->privmsg($channel,$result);
+						#$conn->print("<$nick>\t| $result");
+						#$conn->privmsg($channel,$result);
+						if ( $event->{channel} eq 'msg' )
+						{
+							$self->say(
+								who => $event->{who},
+								channel => "msg",
+								body =>  "$result",
+							);
+						}
+						else
+						{
+							$self->say(
+								channel => "$channel",
+								body =>  "$result",
+							);
+						}
 					}
 					$db_handle->disconnect();
 				}
 				else
 				{
-					$conn->print("Un paramètre attendu");
-					$conn->privmsg($channel,"$event->{'nick'} : Une url est attendue après la commande !link. Taper !help pour plus d'informations...");
+					#$conn->print("Un paramètre attendu");
+					#$conn->privmsg($channel,"$event->{'nick'} : Une url est attendue après la commande !link. Taper !help pour plus d'informations...");
+					$self->say(
+						channel => "$channel",
+						body =>  "$event->{who} : Une url est attendue après la commande !search. Taper !help pour plus d'informations...",
+					);
 				}
-			}
+			} # Fin !search
 		
 			#Il faudrait utiliser switch ....
 			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search')
 			{ 
-				$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
+				#$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
+				$self->say(
+					channel => "$channel",
+					body =>  "$event->{who} : Commande inconnue. Taper !help pour plus d'informations...",
+				);
 			}
 		}		
         	else
         	{
 			# On avait un ! en début de ligne, mais non suivi d'un nom de commande
-            		$conn->print("Pas une commande");
+            		print("Pas une commande");
        		}	
 	}
 
-} # Fin on_public 
+return undef;
+} # Fin said
 
 
 
 
-sub on_msg()
+#sub on_msg()
+sub emoted
 {
 
-	my ($conn, $event) = @_;
-	my $text = $event->{'args'}[0];
-	$conn->print("<" . $event->{'nick'} . ">\t| $text") if $text ne '!heartbeat';
+	my ($self, $event) = @_;
+	my $text = $event->{body};
+	#$conn->print("<" . $event->{'nick'} . ">\t| $text") if $text ne '!heartbeat';
 
 	if (substr($text, 0, 1) eq '!')
 	{
@@ -410,101 +559,81 @@ sub on_msg()
 		{
 			if ("$commande" eq 'reload')
 			{
-				if ("$administrator" eq "" || "$event->{'nick'}" eq "$administrator")
+				if ("$administrator" eq "" || "$event->{who}" eq "$administrator")
 				{
-					&reload($event->{'nick'},$event->{'nick'});
+					&reload($event->{who},$event->{who});
 				}
 				else
 				{
-					&forbidden($event->{'nick'},$event->{'nick'});
+					&forbidden($event->{who},$event->{who});
 				}
 			}
 
                         if ("$commande" eq 'restart')
                         {
-                                if ("$administrator" eq "" || "$event->{'nick'}" eq "$administrator")
+                                if ("$administrator" eq "" || "$event->{who}" eq "$administrator")
                                 {
-                                        &restart($event->{'nick'},$event->{'nick'});
+                                        &restart($event->{who},$event->{who});
                                 }
                                 else
                                 {
-                                        &forbidden($event->{'nick'},$event->{'nick'});
+                                        &forbidden($event->{who},$event->{who});
                                 }
                         }
 
 			
-			if ("$commande" eq 'heartbeat')
-			{
-				if ( "$event->{'nick'}" eq "$username" )
-				{
-					$heartbeat = time();
-				}
-			}
+			#if ("$commande" eq 'heartbeat')
+			#{
+			#	if ( "$event->{'nick'}" eq "$username" )
+			#	{
+			#		$heartbeat = time();
+			#	}
+			#}
 			
 			if ("$commande" eq 'bonjour')
 			{
-				&bonjour($event->{'nick'},$event->{'nick'});
+				#&bonjour($event->{who},$event->{who});
+				$self->say(
+					who => $event->{who},
+					body => "Bonjour $event->{who}",
+				);
 			}
 			
 			if ("$commande" eq 'help')
 			{
-				&help($event->{'nick'},$event->{'nick'});
+				&help($event->{who},$event->{who});
 			}
 			
 			if ("$commande" eq 'link')
 			{
-				$conn->privmsg($event->{'nick'}, "La commande !help ne fonctionne que sur le canal $channel, pas en message privé ;)");
+				#$conn->privmsg($event->{who}, "La commande !link ne fonctionne que sur le canal $channel, pas en message privé ;)");
 			}
 
 			if ("$commande" eq 'update')
 			{
-				if ("$event->{'nick'}" eq "$administrator")
+				if ("$event->{who}" eq "$administrator")
 				{
-					&update($event->{'nick'},$event->{'nick'});
+					&update($event->{who},$event->{who});
 				}
                                 else
                                 {
-                                        &forbidden($event->{'nick'},$event->{'nick'});
+                                        &forbidden($event->{who},$event->{who});
                                 }
 
 			}
 
-			if ("$commande" eq 'say')
+			if ("$commande" eq 'speak')
 			{
-                                if ("$event->{'nick'}" eq "$administrator")
+                                if ("$event->{who}" eq "$administrator")
                                 {
-                                        &say($channel,$text);
+                                        &speak($channel,$text);
                                 }
 			}
 		}
 	}
 
 
-} #Fin Fonction message prive
-
-# Appeler les fonction de cette maniere :
-# &fonction($channel,$event->{'nick'}); pour les messages sur le canal
-# &fonction($event->{'nick'},$event->{'nick'}); pour les messages privés
-# On recupere ainsi avec @_[0] le canal ou le pseudo d'où écrire. et avec @_[1] le pseudo de l'émetteur de la commande
-
-sub bonjour {
-	$conn->privmsg($_[0],"Bonjour $_[1] ...");
-}
-
-sub help {
-
-	if ($_[0] eq $channel)
-	{
-		$conn->privmsg($channel,"$_[1] : Je t'ai envoyé un message privé mon petit chou !");
-	}
-	$conn->privmsg($_[1], "!help : Affiche le manuel d'utilisation");
-	$conn->privmsg($_[1], "!link url : Affiche le titre de la page à l'adresse url ");
-	$conn->privmsg($_[1], "!last : Affiche des informations sur le dernier lien posté ");
-
-	$conn->privmsg($_[1], "Pour consulter l'historique des liens postés, c'est par ici : $website");
-
-
-}
+} #Fin Fonction message prive (emoted)
 
 sub forbidden {
 
@@ -544,7 +673,7 @@ sub update {
 
 }
 
-sub say {
+sub speak {
 	
 	my $text = substr($_[1], 5);
 	$conn->privmsg($_[0],"$text");

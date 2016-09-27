@@ -7,11 +7,14 @@ Sexy IRC bot written (from scratch) in perl with a web interface to collect some
 INSTALL CPAN MODULES
 --------------------
 
-cpan -fi Net::IRC
+# cpan -fi Net::IRC (Obsolete)
+cpan -fi POE::Component::IRC
 
-cpan -fi Net::SSLeay # (you must reinstall after openssl update)
+cpan -fi Net::SSLeay 
 
-cpan -fi LWP::UserAgent LWP::Protocol::https HTTP::Request
+cpan -fi LWP::UserAgent
+cpan -fi LWP::Protocol::https
+cpan -fi HTTP::Request
 
 cpan -fi Try::Tiny
 
