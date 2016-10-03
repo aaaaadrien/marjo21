@@ -17,6 +17,7 @@ cpan -fi LWP::Protocol::https
 cpan -fi HTTP::Request
 
 cpan -fi Try::Tiny
+cpan -fi Switch
 
 cpan -fi DBD::mysql
 

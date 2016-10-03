@@ -9,6 +9,7 @@ package Marjo21;
 
 use DBI;
 use Encode;
+use Switch;
 use utf8;
 use open qw(:std :utf8);
 
@@ -171,7 +172,7 @@ sub said
 				}
 			}
 
-			if ($commande eq 'link' or $commande eq 'l')
+			if ($commande eq 'link' or $commande eq 'l' or $commande eq '!' )
 			{
 			if ( $event->{channel} eq 'msg' ) # Si le msg !link est passé par MP, on ne traite pas mais on averti quand même
 			{
@@ -548,12 +549,78 @@ sub said
 
 			if ($commande eq 'bug')
 			{
-				my $subcommand = substr($text, 0, -2);
-				$self->say(
-					channel => $channel,
-					body => $subcommand,
-				);
+				my $subcommand = substr($text, 5, 3);
+				my $pseudo = $event->{who};
+				
+				if ($subcommand eq 'new')
+				{
+					my $message = substr ($text, 9);
+					
+					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+					my $statement = $db_handle->prepare("SET NAMES utf8;");
+					$statement->execute();
+					my $sql = "INSERT INTO bugs(dateandtime,user,message,solved) VALUES (NOW(),?,?,0)";
+					$statement = $db_handle->prepare($sql);
+					$statement->execute($pseudo,$message,);
+					$db_handle->disconnect();
+				
+					if ( $event->{channel} eq 'msg' )
+					{
+						$self->say(
+							who => $pseudo,
+							channel => 'msg',
+							body => "Bogue enregistré",
+						);
+					}
+					else
+					{
+						$self->say(
+							channel => $channel,
+							body => "Bogue enregistré !",
+						);
+					}
+				} # Fin if $subcommand eq new
 
+				if ($subcommand eq 'see')
+				{
+					if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
+					{
+						my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+						my $sql = "SELECT * FROM bugs ORDER BY id";
+						my $statement = $db_handle->prepare($sql);
+						$statement->execute();
+
+						my $num = $statement->rows;
+						my $result;
+
+						if ( $num ne 0 )
+						{
+							while (my $row_ref = $statement->fetchrow_hashref())
+							{
+								$result = "#$row_ref->{id} : $row_ref->{message} (par $row_ref->{user} le $row_ref->{dateandtime})";
+								$self->say(
+									who => $event->{who},
+									channel => 'msg',
+									body => $result,
+								);
+							}
+						}
+						else
+						{
+							$self->say(
+								who => $pseudo,
+								channel => 'msg',
+								body => "Il n'y a plus de bogues... Cool !",
+							);
+						}
+
+					}
+				} # Fin if $subcommand eq see
+				
+				if ($subcommand eq 'del')
+				{
+				
+				} # Fin if $subcommand eq del
 
 			} # Fin !bug
 
@@ -565,8 +632,9 @@ sub said
 			#	}
 			#} # Fin !heartbeat
 
-			#Il faudrait utiliser switch ....
-			if ( $commande ne 'past' && $commande ne 'link' && $commande ne 'l' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' )
+			my @commands = ('past','link','l','!','bonjour','help','search','talk','bug');
+			unless ( $commande ~~ @commands ) # unless : execute if condition is false
+			#if ( $commande ne 'past' && $commande ne 'link' && $commande ne 'l' && $commande ne '!' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' && $commande ne 'bug' )
 			{ 
 				#$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 				$self->say(
