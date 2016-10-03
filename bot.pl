@@ -91,6 +91,9 @@ my $version = '2.0';
 # On crée l'objet de connexion à IRC :
 my $conn; #A supprimer
 
+my $datestring = localtime();
+print "Start marjo21 : $datestring\n";
+
 # On crée l'objet qui nous permet de nous connecter à IRC :
 Marjo21->new(
 	server => $server,
