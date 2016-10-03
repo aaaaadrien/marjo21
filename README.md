@@ -42,3 +42,7 @@ Enable local service at startup
 ```bash
 rc-update add local default
 ``` 
+
+NOTES
+-----
+Sorry for French comments, I will translate later all comments in english.

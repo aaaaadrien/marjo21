@@ -12,8 +12,8 @@ use Encode;
 use utf8;
 use open qw(:std :utf8);
 
-# Liste des librairies utilisées :
-use Net::IRC; # old IRC module
+# Liste des modules utilisés :
+#use Net::IRC; # old IRC module
 use base qw( Bot::BasicBot ); # new IRC module
 use Net::SSLeay; # A réinstaller en cas de mise à jour d'OpenSSL !!!
 use LWP::UserAgent;
@@ -35,7 +35,7 @@ my $cfg = "bot.cfg";
 
 open (CONFIG, $cfg);
 my $server;
-my $ircencoding;
+my $ircencoding = "iso-8859-1";
 my $channel;
 my $website;
 my $username;
@@ -47,6 +47,7 @@ my $dbuser;
 my $dbpasswd;
 my $administrator;
 my $checkdup;
+my $useragent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0';
 
 while (<CONFIG>) {
 	chomp;
@@ -86,18 +87,8 @@ my $nick = $username;
 my $ircname = 'marjo21 Web Link';
 my $version = '2.0';
 
-# On crée l'objet qui nous permet de nous connecter à IRC :
-#my $irc = new Net::IRC;
-
 # On crée l'objet de connexion à IRC :
 my $conn; #A supprimer
-#my $conn = $irc->newconn(
-#    'Server'      => $server,
-#    'Port'        => 6667, 
-#    'Nick'        => $nick,
-#    'Ircname'     => $ircname,
-#    'Username'    => $username
-#);
 
 # On crée l'objet qui nous permet de nous connecter à IRC :
 Marjo21->new(
@@ -107,58 +98,28 @@ Marjo21->new(
 	charset => $ircencoding,
 )->run();
 
-
-
-# On installe les fonctions de Hook :
-#$conn->add_handler('376', \&on_connect);         # Fin du MOTD => on est connecté
-#$conn->add_handler('public', \&on_public);       # Sur le chan
-#$conn->add_handler('msg',\&on_msg);		# Via msg privé
-
-# On lance la connexion et la boucle de gestion des événements :
-#$irc->start();
-
 # Fonction pour tester la présence du robot sur IRC
-sub heartbeat
-{
-	my $check = 10;
-	
-	sleep 10;
-	$conn->privmsg($username, '!heartbeat');
-	
-	while ( $alive eq 1 )
-	{
-		sleep $check;
-		$conn->privmsg($username, '!heartbeat');	
-		sleep 1;
-		
-		if ( time()-$heartbeat gt 5*$check )
-		{
-		      exec( $^X, $0);
-		}
-		
-	}
-}
-
-
-## Les fonctions de gestion des événements :
-
-#sub on_connect
+#sub heartbeat
 #{
-#    my ($conn, $event) = @_;
-    
-#    $conn->join($channel);
-    #$conn->privmsg($channel, 'Salutations !');
-#    print "$nick started !\n";
-    
-#    $conn->{'connected'} = 1;
-    
-#    my $thrheartbeat = threads->new(\&heartbeat);
-#} # Fin on_connect
+#	my $check = 10;
+#	
+#	sleep 10;
+#	$conn->privmsg($username, '!heartbeat');
+#	
+#	while ( $alive eq 1 )
+#	{
+#		sleep $check;
+#		$conn->privmsg($username, '!heartbeat');	
+#		sleep 1;
+#		
+#		if ( time()-$heartbeat gt 5*$check )
+#		{
+#		      exec( $^X, $0);
+#		}
+#		
+#	}
+#}
 
-
-
-
-#sub on_public
 sub said
 {
 	my ($self, $event) = @_;
@@ -275,7 +236,7 @@ sub said
 
 						if ( $alreadypost ne 1 )
 						{
-							my $ua = LWP::UserAgent->new(agent => 'Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0', ssl_opts => { verify_hostname => 0 });
+							my $ua = LWP::UserAgent->new(agent => $useragent, ssl_opts => { verify_hostname => 0 });
 							my $res = $ua->request(HTTP::Request->new(GET => $url));
 						
 							my $blacklisted = &blacklistedurl($url);
@@ -519,9 +480,93 @@ sub said
 					);
 				}
 			} # Fin !search
-		
+
+			if ($commande eq 'reload')
+			{
+				# Pour éviter le déni de service
+				#if ( $times+0 lt time() )
+				#{
+					if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
+					{
+						$self->say(
+							who => $event->{who},
+							channel => "msg",
+							body => "Je recharge mon programme...",
+						);
+						exec( $^X, $0);
+					}
+				#}
+
+			} # Fin !reload
+
+			if ($commande eq 'restart')
+			{
+				# Pour éviter le déni de service
+				#if ( $times+0 lt time() )
+				#{
+					 if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
+					 {
+					 	$self->say(
+							who => $event->{who},
+							channel => "msg",
+							body => "Je redémarre mon programme...",
+						);
+						exit (3);
+					}
+				#}
+			} # Fin !restart
+			
+			if ($commande eq 'update')
+			{
+				# Pour éviter le déni de service
+				#if ( $times+0 lt time() )
+				#{
+					if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
+					{
+						$self->say(
+							who => $event->{who},
+							channel => "msg",
+							body => "Je mets à jour mon programme et je reviens...",
+						);
+						exec ( 'sh update-marjo21.sh' );		
+						exit(2);
+					}
+				#}
+			} # Fin !update
+
+			if ($commande eq 'talk')
+			{
+				 if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
+				 {
+					$text = substr($text, 6);
+					$self->say(
+						channel => $channel,
+						body => $text,
+					);
+				 }
+			} # Fin !talk
+
+			if ($commande eq 'bug')
+			{
+				my $subcommand = substr($text, 0, -2);
+				$self->say(
+					channel => $channel,
+					body => $subcommand,
+				);
+
+
+			} # Fin !bug
+
+			#if ("$commande" eq 'heartbeat')
+			#{
+			#	if ( "$event->{'nick'}" eq "$username" )
+			#	{
+			#		$heartbeat = time();
+			#	}
+			#} # Fin !heartbeat
+
 			#Il faudrait utiliser switch ....
-			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search')
+			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' )
 			{ 
 				#$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 				$self->say(
@@ -542,142 +587,6 @@ return undef;
 
 
 
-
-#sub on_msg()
-sub emoted
-{
-
-	my ($self, $event) = @_;
-	my $text = $event->{body};
-	#$conn->print("<" . $event->{'nick'} . ">\t| $text") if $text ne '!heartbeat';
-
-	if (substr($text, 0, 1) eq '!')
-	{
-		# $text commence par un '!' => il s'agit probablement d'une commande
-		my $commande = ($text =~ m/^!([^ ]*)/)[0];
-		if ($commande ne '')
-		{
-			if ("$commande" eq 'reload')
-			{
-				if ("$administrator" eq "" || "$event->{who}" eq "$administrator")
-				{
-					&reload($event->{who},$event->{who});
-				}
-				else
-				{
-					&forbidden($event->{who},$event->{who});
-				}
-			}
-
-                        if ("$commande" eq 'restart')
-                        {
-                                if ("$administrator" eq "" || "$event->{who}" eq "$administrator")
-                                {
-                                        &restart($event->{who},$event->{who});
-                                }
-                                else
-                                {
-                                        &forbidden($event->{who},$event->{who});
-                                }
-                        }
-
-			
-			#if ("$commande" eq 'heartbeat')
-			#{
-			#	if ( "$event->{'nick'}" eq "$username" )
-			#	{
-			#		$heartbeat = time();
-			#	}
-			#}
-			
-			if ("$commande" eq 'bonjour')
-			{
-				#&bonjour($event->{who},$event->{who});
-				$self->say(
-					who => $event->{who},
-					body => "Bonjour $event->{who}",
-				);
-			}
-			
-			if ("$commande" eq 'help')
-			{
-				&help($event->{who},$event->{who});
-			}
-			
-			if ("$commande" eq 'link')
-			{
-				#$conn->privmsg($event->{who}, "La commande !link ne fonctionne que sur le canal $channel, pas en message privé ;)");
-			}
-
-			if ("$commande" eq 'update')
-			{
-				if ("$event->{who}" eq "$administrator")
-				{
-					&update($event->{who},$event->{who});
-				}
-                                else
-                                {
-                                        &forbidden($event->{who},$event->{who});
-                                }
-
-			}
-
-			if ("$commande" eq 'speak')
-			{
-                                if ("$event->{who}" eq "$administrator")
-                                {
-                                        &speak($channel,$text);
-                                }
-			}
-		}
-	}
-
-
-} #Fin Fonction message prive (emoted)
-
-sub forbidden {
-
-	$conn->privmsg("$_[1]", "Hé, tu te crois où ... tu n'es pas autorisé à exécuter cette commande...");
-
-}
-
-sub reload {
-
-	# Pour éviter le déni de service
-	if ( $times+0 lt time() )
-	{
-		$conn->print("<$nick>\t| Je recharge mon programme à la demande de $_[1], je reviens...");
-	
-		exec( $^X, $0);
-	}
-}
-
-sub restart {
-
-        # Pour éviter le déni de service
-        if ( $times+0 lt time() )
-        {
-                $conn->print("<$nick>\t| Je redémarre mon programme à la demande de $_[1], je reviens...");
-
-                exit (3);
-        }
-}
-
-sub update {
-
-	$conn->privmsg($channel, "Démarrage de la mise à jour ... Je reviens dans un court instant :D");
-	$conn->print("<$nick>\t| Démarrage de la mise à jour sur demande de $_[1] ");
-	exec ( 'sh update-marjo21.sh' );
-	exit (2);
-
-
-}
-
-sub speak {
-	
-	my $text = substr($_[1], 5);
-	$conn->privmsg($_[0],"$text");
-}
 
 sub blacklistedurl {
 
