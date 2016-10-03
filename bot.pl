@@ -349,7 +349,7 @@ sub said
 			} # Fin de la condition "si MP"		
 			} # Fin !link
 			
-			if ($commande eq 'last')
+			if ($commande eq 'past')
 			{
 
 					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
@@ -382,7 +382,7 @@ sub said
 					}
 					$db_handle->disconnect();
 				
-			} #Fin !last
+			} #Fin !past
 
 			if ($commande eq 'search')
 			{
@@ -566,7 +566,7 @@ sub said
 			#} # Fin !heartbeat
 
 			#Il faudrait utiliser switch ....
-			if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' )
+			if ( $commande ne 'past' && $commande ne 'link' && $commande ne 'l' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' )
 			{ 
 				#$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 				$self->say(
