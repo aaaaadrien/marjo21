@@ -126,7 +126,8 @@ sub heartbeat
 		
 		if ( time()-$heartbeat gt 5*$check )
 		{
-		      exec( $^X, $0);
+		      #exec( $^X, $0);
+		      exit(42);
 		}
 		
 	}
