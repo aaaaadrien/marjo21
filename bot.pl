@@ -100,26 +100,37 @@ Marjo21->new(
 )->run();
 
 # Fonction pour tester la présence du robot sur IRC
-#sub heartbeat
-#{
-#	my $check = 10;
-#	
-#	sleep 10;
-#	$conn->privmsg($username, '!heartbeat');
-#	
-#	while ( $alive eq 1 )
-#	{
-#		sleep $check;
-#		$conn->privmsg($username, '!heartbeat');	
-#		sleep 1;
-#		
-#		if ( time()-$heartbeat gt 5*$check )
-#		{
-#		      exec( $^X, $0);
-#		}
-#		
-#	}
-#}
+sub heartbeat
+{
+	my $check = 10;
+	
+	sleep 10;
+	#$conn->privmsg($username, '!heartbeat');
+	$self->say(
+		who => $username,
+		channel => "msg",
+		body => "!heartbeat",
+	);
+
+	while ( $alive eq 1 )
+	{
+		sleep $check;
+		#$conn->privmsg($username, '!heartbeat');	
+		$self->say(
+			who => $username,
+			channel => "msg",
+			body => "!heartbeat",
+		);
+		
+		sleep 1;
+		
+		if ( time()-$heartbeat gt 5*$check )
+		{
+		      exec( $^X, $0);
+		}
+		
+	}
+}
 
 sub said
 {
