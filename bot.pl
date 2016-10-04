@@ -28,7 +28,7 @@ my $times = time();
 my $alive = 1;
 my $heartbeat : shared;
 $heartbeat = 42;
-my $self : shared;
+my $self; #: shared;
 
 
 # On charge la config
@@ -78,7 +78,6 @@ if ( length($server) < 2 || length($channel) < 2 || length($username) < 2)
 # On charge la base de données
 
 
-
 # Fin de la config
 
 # Configuration des options de connexion (serveur, login) :
@@ -86,7 +85,7 @@ my $nick = $username;
 
 # Informations concernant le Bot :
 my $ircname = 'marjo21 Web Link';
-my $version = '2.0';
+my $version = '2.0.0';
 
 # On crée l'objet de connexion à IRC :
 my $conn; #A supprimer
@@ -127,9 +126,10 @@ sub heartbeat
 		
 		sleep 1;
 		
-		if ( time()-$heartbeat gt 5*$check )
+		if ( time()-$heartbeat gt 3*$check )
 		{
 		      #exec( $^X, $0);
+		      $self->shutdown("...");
 		      exit(42);
 		}
 		
@@ -159,13 +159,52 @@ sub said
 						body => "$event->{who}: Je t'ai envoyé un message prové mon p'tit chou ! :-)",
 					);
 				}
-				$self->say(
-					who => $event->{who},
-					channel => "msg",
-					body => "Aide : !help => Affiche le manuel d'utilisation -- !link http://url => Affiche le titre de la page à l'adresse url -- !last => Affiche des informations sur le dernier lien posté. Pour consulter l'historique des liens postés, c'est par ici : $website",
-				);
+				my @help;
+				push(@help,"Aide de marjo21. Liste des commandes disponibles :");
+				push(@help,"!help : Affiche ce manuel d'utilisation");
+				push(@help,"!link http://url (ou !l ou !!) : Affiche le titre dde la page à l'adresse URL et l'indexe.");
+				push(@help,"!last : Affiche le dernier lien posté.");
+				push(@help,"!search motclé : Cherche dans la base de marjo21 en fonction du mot clé.");
+				push(@help,"!bug new description : Envoie un bogue de fonctionnement à l'administrateur");
+				push(@help,"Pour consulter l'historique des liens postés, c'est par ici : $website");
+
+				foreach (@help)
+				{
+					$self->say(
+						who => $event->{who},
+						channel => "msg",
+						body => "$_",
+					);
+				}
 				
 			}
+
+			if ($commande eq 'about')
+			{
+				if ($event->{channel} ne 'msg')
+				{
+					$self->say(
+						channel => $channel,
+						body => "$event->{who}: Je t'ai envoyé un message prové mon p'tit chou ! :-)",
+					);
+				}
+				my @about;
+				push(@about,"A propos de moi : ");
+				push(@about,"Je m'appelle $username et je suis un collecteur de liens sur canal IRC $channel. Je suis codée en PERL par Adrien_D pour interagir avec toi, mon p'tit $event->{who} !");
+				push(@about, "Si tu as envie de regarder mon site web, il se trouve à l'adresse $website et tu retrouveras tous les liens qui ont été postés sur $channel depuis le début. Il est codé en PHP.");
+				push(@about, "Tu peux retrouver toutes les sources du projet (sous licence MIT) sur le GitHub d'Adrien_D, à l'adresse suivante : https://github.com/aaaaadrien/marjo21");
+				push(@about,"Voilà, tu sais maintenant tout sur moi, ou presque, car je ne te filerai pas mon 06 ! Bises ! $username");
+
+				foreach (@about)
+				{
+					$self->say(
+						who => $event->{who},
+						channel => "msg",
+						body => "$_",
+					);
+				}	
+				
+			} # Fin !about
 		
 			if ($commande eq 'bonjour')
 			{
@@ -365,7 +404,7 @@ sub said
 			} # Fin de la condition "si MP"		
 			} # Fin !link
 			
-			if ($commande eq 'past')
+			if ($commande eq 'last')
 			{
 
 					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
@@ -398,7 +437,7 @@ sub said
 					}
 					$db_handle->disconnect();
 				
-			} #Fin !past
+			} #Fin !last
 
 			if ($commande eq 'search')
 			{
@@ -601,7 +640,7 @@ sub said
 					if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
 					{
 						my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-						my $sql = "SELECT * FROM bugs ORDER BY id";
+						my $sql = "SELECT * FROM bugs WHERE solved=0 ORDER BY id";
 						my $statement = $db_handle->prepare($sql);
 						$statement->execute();
 
@@ -634,7 +673,23 @@ sub said
 				
 				if ($subcommand eq 'del')
 				{
-				
+					if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
+					{
+						my $id = substr ($text, 9);
+						if ( $id =~ /^[0-9]+$/ ) # Check if number
+						{					
+							my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+							my $sql = "UPDATE bugs SET solved=1 WHERE id=$id";
+							my $statement = $db_handle->prepare($sql);
+							$statement->execute();
+
+							$self->say(
+								who => $pseudo,
+								channel => 'msg',
+								body => "Bogue #$id supprimé!",
+							);
+						} #End if check number
+					}
 				} # Fin if $subcommand eq del
 
 			} # Fin !bug
@@ -647,9 +702,9 @@ sub said
 			#	}
 			#} # Fin !heartbeat
 
-			my @commands = ('past','link','l','!','bonjour','help','search','talk','bug');
+			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about');
 			unless ( $commande ~~ @commands ) # unless : execute if condition is false
-			#if ( $commande ne 'past' && $commande ne 'link' && $commande ne 'l' && $commande ne '!' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' && $commande ne 'bug' )
+			#if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne '!' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' && $commande ne 'bug' )
 			{ 
 				#$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
 				$self->say(
