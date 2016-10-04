@@ -160,7 +160,7 @@ sub said
 					);
 				}
 				my @help;
-				push(@help,"Aide de marjo21. Liste des commandes disponibles :");
+				push(@help,"Voici la liste des commandes disponibles :");
 				push(@help,"!help : Affiche ce manuel d'utilisation");
 				push(@help,"!link http://url (ou !l ou !!) : Affiche le titre dde la page à l'adresse URL et l'indexe.");
 				push(@help,"!last : Affiche le dernier lien posté.");
@@ -189,8 +189,8 @@ sub said
 					);
 				}
 				my @about;
-				push(@about,"A propos de moi : ");
-				push(@about,"Je m'appelle $username et je suis un collecteur de liens sur canal IRC $channel. Je suis codée en PERL par Adrien_D pour interagir avec toi, mon p'tit $event->{who} !");
+				push(@about,"Salut toi !");
+				push(@about,"Je m'appelle $username, je suis en version $version. Je collecte les liens sur canal IRC $channel. Je suis codée en PERL par Adrien_D pour interagir avec toi, mon p'tit $event->{who} !");
 				push(@about, "Si tu as envie de regarder mon site web, il se trouve à l'adresse $website et tu retrouveras tous les liens qui ont été postés sur $channel depuis le début. Il est codé en PHP.");
 				push(@about, "Tu peux retrouver toutes les sources du projet (sous licence MIT) sur le GitHub d'Adrien_D, à l'adresse suivante : https://github.com/aaaaadrien/marjo21");
 				push(@about,"Voilà, tu sais maintenant tout sur moi, ou presque, car je ne te filerai pas mon 06 ! Bises ! $username");
