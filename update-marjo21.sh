@@ -7,11 +7,22 @@ rm bot.pl
 wget https://raw.githubusercontent.com/aaaaadrien/marjo21/master/bot.pl
 chmod +x bot.pl
 
-rm public_html/index.php
-wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/index.php
+rm update-marjo21.sh
+wget https://raw.githubusercontent.com/aaaaadrien/marjo21/master/update-marjo21.sh
+chmod +x update-marjo21.sh
+
+
+rm public_html/header.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/header.php
+
+rm public_html/footer.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/footer.php
 
 rm public_html/functions.php
 wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/functions.php
+
+rm public_html/index.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/index.php
 
 rm public_html/about.php
 wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/about.php
@@ -30,3 +41,4 @@ wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master
 
 rm public_html/style.css
 wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/style.css
+

@@ -1,5 +1,5 @@
+<?php include ('header.php'); ?>
 <!doctype html>
-<?php include ('config.php'); ?>
 <html>
 	<head>
 		<meta charset="UTF-8"/> 
@@ -38,4 +38,4 @@
 
 	</body>
 </html>
-<?php $pdo = null; ?>
+<?php include('footer.php'); ?>

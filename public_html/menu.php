@@ -9,5 +9,3 @@
 		<li><a href="about.php" title="A propos">A propos</a></li>
 	</ul>
 </div>
-
-Je suis encore en cours de création, il peut rester encore quelques bogues....
