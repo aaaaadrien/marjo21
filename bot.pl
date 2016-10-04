@@ -149,7 +149,7 @@ sub said
         	if ($commande ne '')
         	{
             		
-			if ($commande eq 'help')
+			if ($commande eq 'help' or $commande eq 'h')
 			{
 				#&help($channel, $event->{'nick'});
 				if ($event->{channel} ne 'msg')
@@ -439,7 +439,7 @@ sub said
 				
 			} #Fin !last
 
-			if ($commande eq 'search')
+			if ($commande eq 'search' or $commande eq 's')
 			{
 				my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
 				if (defined($params[0]) && $params[0] ne '')
@@ -694,15 +694,15 @@ sub said
 
 			} # Fin !bug
 
-			#if ("$commande" eq 'heartbeat')
-			#{
-			#	if ( "$event->{'nick'}" eq "$username" )
-			#	{
-			#		$heartbeat = time();
-			#	}
-			#} # Fin !heartbeat
+			if ("$commande" eq 'heartbeat')
+			{
+				if ( "$event->{'who'}" eq "$username" )
+				{
+					$heartbeat = time();
+				}
+			} # Fin !heartbeat
 
-			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about');
+			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about', 'heartbeat', 's', 'h');
 			unless ( $commande ~~ @commands ) # unless : execute if condition is false
 			#if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne '!' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' && $commande ne 'bug' )
 			{ 
