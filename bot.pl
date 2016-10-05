@@ -28,7 +28,7 @@ my $times = time();
 my $alive = 1;
 my $heartbeat : shared;
 $heartbeat = 42;
-my $self; #: shared;
+my $self : shared;
 
 
 # On charge la config
@@ -101,16 +101,36 @@ Marjo21->new(
 	charset => $ircencoding,
 )->run();
 
+#sub connected {
+#	my $self = shift;
+#	my $thrheartbeat = threads->new(\&heartbeat);
+#}
+
+# Fonction appelée régulièrement
+sub tick {
+	my $self = shift;
+	$self->say(
+		who => "$nick",
+		channel => "who",
+		body => "!heartbeat",
+	);
+	# Timer between each call
+	return 2;
+}
+
 # Fonction pour tester la présence du robot sur IRC
 sub heartbeat
 {
-	my $check = 10;
 	
+	my $check = 2;
+	
+	print STDERR "debut heartbeat\n";
+
 	sleep 10;
 	#$conn->privmsg($username, '!heartbeat');
 	$self->say(
 		who => $username,
-		channel => "msg",
+		channel => "who",
 		body => "!heartbeat",
 	);
 
@@ -118,18 +138,19 @@ sub heartbeat
 	{
 		sleep $check;
 		#$conn->privmsg($username, '!heartbeat');	
-		$self->say(
-			who => $username,
-			channel => "msg",
-			body => "!heartbeat",
-		);
+		#$self->say(
+		#	who => $username,
+		#	channel => "who",
+		#	body => "!heartbeat",
+		#);
+		
+		print STDERR "heartbeat\n";
 		
 		sleep 1;
 		
 		if ( time()-$heartbeat gt 3*$check )
 		{
 		      #exec( $^X, $0);
-		      $self->shutdown("...");
 		      exit(42);
 		}
 		
@@ -696,10 +717,11 @@ sub said
 
 			if ("$commande" eq 'heartbeat')
 			{
-				if ( "$event->{'who'}" eq "$username" )
-				{
-					$heartbeat = time();
-				}
+				print STDERR "heartbeat\n";
+				#if ( "$event->{'who'}" eq "$username" )
+				#{
+				#	$heartbeat = time();
+				#}
 			} # Fin !heartbeat
 
 			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about', 'heartbeat', 's', 'h');
