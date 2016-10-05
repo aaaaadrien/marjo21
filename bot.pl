@@ -24,10 +24,14 @@ use DBD::mysql;
 use Try::Tiny;
 
 
-my $times = time();
-my $alive = 1;
-my $heartbeat : shared;
-$heartbeat = 42;
+#my $times = time();
+#my $alive = 1;
+#my $heartbeat : shared;
+#$heartbeat = 42;
+my $lastheart : shared;
+$lastheart = time();
+my $curheart : shared;
+$curheart = time();
 my $self : shared;
 
 
@@ -85,10 +89,10 @@ my $nick = $username;
 
 # Informations concernant le Bot :
 my $ircname = 'marjo21 Web Link';
-my $version = '2.0.0';
+my $version = '2.0.1';
 
 # On crée l'objet de connexion à IRC :
-my $conn; #A supprimer
+#my $conn; #A supprimer
 
 my $datestring = localtime();
 print "Start marjo21 : $datestring\n";
@@ -109,53 +113,67 @@ Marjo21->new(
 # Fonction appelée régulièrement
 sub tick {
 	my $self = shift;
+	my $check = 10;
 	$self->say(
 		who => "$nick",
-		channel => "who",
-		body => "!heartbeat",
+		channel => "msg",
+		body => "?heartbeat",
 	);
+	
+	$curheart = time();
+	my $delta = $curheart-$lastheart;
+	my $maxdelta = 5*$check;
+
+	#print STDERR "L: $lastheart \nC: $curheart \nDelta : $delta \nMaxDelta : $maxdelta \n";
+
+	if ( $delta > $maxdelta )
+	{
+		print STDERR "Timeout !!\n";
+		exit(42);
+	}
+
 	# Timer between each call
-	return 2;
+	return $check;
 }
 
 # Fonction pour tester la présence du robot sur IRC
-sub heartbeat
-{
+#sub heartbeat
+#{
 	
-	my $check = 2;
+#	my $check = 2;
 	
-	print STDERR "debut heartbeat\n";
+#	print STDERR "debut heartbeat\n";
 
-	sleep 10;
+#	sleep 10;
 	#$conn->privmsg($username, '!heartbeat');
-	$self->say(
-		who => $username,
-		channel => "who",
-		body => "!heartbeat",
-	);
+#	$self->say(
+#		who => $username,
+#		channel => "who",
+#		body => "?heartbeat",
+#	);
 
-	while ( $alive eq 1 )
-	{
-		sleep $check;
+#	while ( $alive eq 1 )
+#	{
+#		sleep $check;
 		#$conn->privmsg($username, '!heartbeat');	
 		#$self->say(
 		#	who => $username,
 		#	channel => "who",
-		#	body => "!heartbeat",
+		#	body => "?heartbeat",
 		#);
 		
-		print STDERR "heartbeat\n";
+#		print STDERR "heartbeat\n";
 		
-		sleep 1;
+#		sleep 1;
 		
-		if ( time()-$heartbeat gt 3*$check )
-		{
+#		if ( time()-$heartbeat gt 3*$check )
+#		{
 		      #exec( $^X, $0);
-		      exit(42);
-		}
+#		      exit(42);
+#		}
 		
-	}
-}
+#	}
+#}
 
 sub said
 {
@@ -715,16 +733,7 @@ sub said
 
 			} # Fin !bug
 
-			if ("$commande" eq 'heartbeat')
-			{
-				print STDERR "heartbeat\n";
-				#if ( "$event->{'who'}" eq "$username" )
-				#{
-				#	$heartbeat = time();
-				#}
-			} # Fin !heartbeat
-
-			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about', 'heartbeat', 's', 'h');
+			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about', 's', 'h');
 			unless ( $commande ~~ @commands ) # unless : execute if condition is false
 			#if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne '!' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' && $commande ne 'bug' )
 			{ 
@@ -738,9 +747,19 @@ sub said
         	else
         	{
 			# On avait un ! en début de ligne, mais non suivi d'un nom de commande
-            		print("Pas une commande");
-       		}	
-	}
+			print "pas une commande \n";
+       		} # if ($commande ne '')
+			
+	} # if (substr($text, 0, 1) eq '!')
+
+	if ( $text eq "?heartbeat" )
+	{
+		if ( "$event->{'who'}" eq "$username" )
+		{
+			$lastheart = time();
+			#print STDERR "heartbeat !!!\n";
+		}
+	}  # Fin ?heartbeat
 
 return undef;
 } # Fin said
