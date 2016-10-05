@@ -3,6 +3,37 @@ marjo21
 
 Sexy IRC bot written (from scratch) in perl with a web interface to collect some links on a channel.
 
+PREREQUISITES
+-------------
+
+### For bot :
+
+PERL >= 5.12
+POE::Component::IRC (PERL Module)
+Net::SSLeay (PERL Module)
+LWP::UserAgent (PERL Module)
+LWP::Protocol::https (PERL Module)
+HTTP::Request (PERL Module)
+Try::Tiny (PERL Module)
+DBD::mysql (PERL Module)
+
+
+### For website :
+
+Apache >= 2.2
+PHP >= 5.4
+PHP PDO Module
+
+
+### For both :
+
+Mysql or MariaDB
+
+
+### Suggestions :
+I recommend screen (Terminal multiplexer) to launch the bot and detach shell.
+See "STARTUP SCRIPT FOR MAJO21" section below. 
+
 
 INSTALL CPAN MODULES
 --------------------
@@ -17,7 +48,6 @@ cpan -fi LWP::Protocol::https
 cpan -fi HTTP::Request
 
 cpan -fi Try::Tiny
-cpan -fi Switch
 
 cpan -fi DBD::mysql
 

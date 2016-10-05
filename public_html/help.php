@@ -18,13 +18,14 @@
 		<h2>Les commandes essentielles à connaitre</h2>
 
 		<p>
-			Dans le canal IRC, il est possible d'utiliser plusieurs commandes pour piloter marjo21 :
+			Dans le canal IRC, il est possible d'utiliser plusieurs commandes pour piloter marjo21. Voici la liste des commandes disponibles :
 
 			<ul>
-			
-			<li> <span class="command">!link http://url</span>: Poste sur le canal IRC un lien. Le titre de l'url est cité par marjo21 dans le canal et est référencé sur le site web.</li>
-			<li> <span class="command">!last</span> : Rappelle le dernier lien posté.</li>
-			<li> <span class="command">!help</span> : Afficher le manuel d'utilisation de marjo21 par message privé.</li>
+				<li> <span class="command">!help</span> : Affiche ce manuel d'utilisation</li>
+				<li> <span class="command">!link http://url (ou !l ou !!)</span> : Affiche le titre dde la page à l'adresse URL et l'indexe.</li>
+				<li> <span class="command">!last</span> : Affiche le dernier lien posté.</li>
+				<li> <span class="command">!search motclé</span> : Cherche dans la base de marjo21 en fonction du mot clé.</li>
+				<li> <span class="command">!bug new description</span> : Envoie un bogue de fonctionnement à l'administrateur.</li>
 
 			</ul>
 		</p>

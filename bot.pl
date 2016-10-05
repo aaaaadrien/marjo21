@@ -204,7 +204,7 @@ sub said
 				push(@help,"!link http://url (ou !l ou !!) : Affiche le titre dde la page à l'adresse URL et l'indexe.");
 				push(@help,"!last : Affiche le dernier lien posté.");
 				push(@help,"!search motclé : Cherche dans la base de marjo21 en fonction du mot clé.");
-				push(@help,"!bug new description : Envoie un bogue de fonctionnement à l'administrateur");
+				push(@help,"!bug new description : Envoie un bogue de fonctionnement à l'administrateur.");
 				push(@help,"Pour consulter l'historique des liens postés, c'est par ici : $website");
 
 				foreach (@help)
@@ -645,7 +645,7 @@ sub said
 				my $subcommand = substr($text, 5, 3);
 				my $pseudo = $event->{who};
 				
-				if ($subcommand eq 'new')
+				if ($subcommand eq 'new' or $subcommand eq 'add')
 				{
 					my $message = substr ($text, 9);
 					
@@ -672,7 +672,7 @@ sub said
 							body => "Bogue enregistré !",
 						);
 					}
-				} # Fin if $subcommand eq new
+				} # Fin if $subcommand eq new or $subcommand eq add
 
 				if ($subcommand eq 'see')
 				{

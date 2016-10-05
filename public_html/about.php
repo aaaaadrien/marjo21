@@ -18,7 +18,7 @@
 		<h2>Marjo21 : le collecteur de liens sur canal IRC</h2>
 
 		<p>
-			Marjo21 est codée en perl pour la partie robot, et en PHP pour la partie web.
+			<b>Marjo21</b> est codée en PERL pour la partie robot, et en PHP pour la partie web. Le robot est optimisé pour fonctionner sur un serveur GNU/Linux. Le multiplexeur de terminal <b>screen</b> est conseillé pour exécuter le robot dans un shell détaché. PERL 5.12 ou supérieur est requis.
 		</p>
 
 		<p>
