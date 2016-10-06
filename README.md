@@ -9,28 +9,38 @@ PREREQUISITES
 ### For bot :
 
 PERL >= 5.12
+
 POE::Component::IRC (PERL Module)
+
 Net::SSLeay (PERL Module)
+
 LWP::UserAgent (PERL Module)
+
 LWP::Protocol::https (PERL Module)
+
 HTTP::Request (PERL Module)
+
 Try::Tiny (PERL Module)
+
 DBD::mysql (PERL Module)
 
 
 ### For website :
 
 Apache >= 2.2
+
 PHP >= 5.4
+
 PHP PDO Module
 
 
 ### For both :
 
-Mysql or MariaDB
+MySQL or MariaDB
 
 
 ### Suggestions :
+
 I recommend screen (Terminal multiplexer) to launch the bot and detach shell.
 See "STARTUP SCRIPT FOR MAJO21" section below. 
 
@@ -38,7 +48,6 @@ See "STARTUP SCRIPT FOR MAJO21" section below.
 INSTALL CPAN MODULES
 --------------------
 
-# cpan -fi Net::IRC (Obsolete)
 cpan -fi POE::Component::IRC
 
 cpan -fi Net::SSLeay 
@@ -76,4 +85,5 @@ rc-update add local default
 
 NOTES
 -----
+
 Sorry for French comments, I will translate later all comments in english.

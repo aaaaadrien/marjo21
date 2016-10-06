@@ -122,7 +122,7 @@ sub tick {
 	
 	$curheart = time();
 	my $delta = $curheart-$lastheart;
-	my $maxdelta = 5*$check;
+	my $maxdelta = 4*$check;
 
 	#print STDERR "L: $lastheart \nC: $curheart \nDelta : $delta \nMaxDelta : $maxdelta \n";
 
@@ -195,7 +195,7 @@ sub said
 				{
 					$self->say(
 						channel => $channel,
-						body => "$event->{who}: Je t'ai envoyé un message prové mon p'tit chou ! :-)",
+						body => "$event->{who}: Je t'ai envoyé un message privé mon p'tit chou ! :-)",
 					);
 				}
 				my @help;
@@ -228,8 +228,7 @@ sub said
 					);
 				}
 				my @about;
-				push(@about,"Salut toi !");
-				push(@about,"Je m'appelle $username, je suis en version $version. Je collecte les liens sur canal IRC $channel. Je suis codée en PERL par Adrien_D pour interagir avec toi, mon p'tit $event->{who} !");
+				push(@about,"Salut toi ! Je m'appelle $username, je suis en version $version. Je collecte les liens sur canal IRC $channel. Je suis codée en PERL par Adrien_D pour interagir avec toi, mon p'tit $event->{who} !");
 				push(@about, "Si tu as envie de regarder mon site web, il se trouve à l'adresse $website et tu retrouveras tous les liens qui ont été postés sur $channel depuis le début. Il est codé en PHP.");
 				push(@about, "Tu peux retrouver toutes les sources du projet (sous licence MIT) sur le GitHub d'Adrien_D, à l'adresse suivante : https://github.com/aaaaadrien/marjo21");
 				push(@about,"Voilà, tu sais maintenant tout sur moi, ou presque, car je ne te filerai pas mon 06 ! Bises ! $username");
@@ -644,33 +643,58 @@ sub said
 			{
 				my $subcommand = substr($text, 5, 3);
 				my $pseudo = $event->{who};
+				my $fullcommand = substr($text, 0, 9);
 				
-				if ($subcommand eq 'new' or $subcommand eq 'add')
+				if ( $subcommand eq 'new' or $subcommand eq 'add' )
 				{
-					my $message = substr ($text, 9);
-					
-					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-					my $statement = $db_handle->prepare("SET NAMES utf8;");
-					$statement->execute();
-					my $sql = "INSERT INTO bugs(dateandtime,user,message,solved) VALUES (NOW(),?,?,0)";
-					$statement = $db_handle->prepare($sql);
-					$statement->execute($pseudo,$message,);
-					$db_handle->disconnect();
-				
-					if ( $event->{channel} eq 'msg' )
+
+					if ( $fullcommand eq '!bug new ' or $fullcommand eq '!bug add ')
 					{
-						$self->say(
-							who => $pseudo,
-							channel => 'msg',
-							body => "Bogue enregistré",
-						);
+						my $message = substr ($text, 9);
+					
+						my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
+						my $statement = $db_handle->prepare("SET NAMES utf8;");
+						$statement->execute();
+						my $sql = "INSERT INTO bugs(dateandtime,user,message,solved) VALUES (NOW(),?,?,0)";
+						$statement = $db_handle->prepare($sql);
+						$statement->execute($pseudo,$message,);
+						$db_handle->disconnect();
+				
+						if ( $event->{channel} eq 'msg' )
+						{
+							$self->say(
+								who => $pseudo,
+								channel => 'msg',
+								body => "Bug enregistré",
+							);
+						}
+						else
+						{
+							$self->say(
+								channel => $channel,
+								body => "Bug enregistré !",
+							);
+						}
 					}
 					else
 					{
-						$self->say(
-							channel => $channel,
-							body => "Bogue enregistré !",
-						);
+						if ( $event->{channel} eq 'msg' )
+						{
+							$self->say(
+								who => $event->{who},
+								channel => "msg",
+								body =>  "La commande !bug $subcommand n'est oas complète...",
+							);
+						}
+						else
+						{
+	
+							$self->say(
+								who => $event->{who},
+								channel => "$channel",
+								body =>  "La commande !bug $subcommand n'est oas complète...",
+							);
+						}
 					}
 				} # Fin if $subcommand eq new or $subcommand eq add
 
@@ -725,11 +749,32 @@ sub said
 							$self->say(
 								who => $pseudo,
 								channel => 'msg',
-								body => "Bogue #$id supprimé!",
+								body => "Bug #$id supprimé!",
 							);
 						} #End if check number
 					}
 				} # Fin if $subcommand eq del
+
+				if ($subcommand ne 'new' and $subcommand ne 'add' and $subcommand ne 'see' and $subcommand ne 'del')
+				{
+					if ( $event->{channel} eq 'msg' )
+					{
+						$self->say(
+							who => $event->{who},
+							channel => "msg",
+							body =>  "La sous-commande n'a pas été reconnue ou est absente...",
+						);
+					}
+					else
+					{
+
+						$self->say(
+							who => $event->{who},
+							channel => "$channel",
+							body =>  "La sous-commande n'a pas été reconnue ou est absente...",
+						);
+					}
+				}
 
 			} # Fin !bug
 

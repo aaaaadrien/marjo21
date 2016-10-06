@@ -25,7 +25,7 @@
 				<li> <span class="command">!link http://url (ou !l ou !!)</span> : Affiche le titre dde la page à l'adresse URL et l'indexe.</li>
 				<li> <span class="command">!last</span> : Affiche le dernier lien posté.</li>
 				<li> <span class="command">!search motclé</span> : Cherche dans la base de marjo21 en fonction du mot clé.</li>
-				<li> <span class="command">!bug new description</span> : Envoie un bogue de fonctionnement à l'administrateur.</li>
+				<li> <span class="command">!bug new description</span> : Envoie un bug de fonctionnement ou une proposition d'amélioration à l'administrateur.</li>
 
 			</ul>
 		</p>
