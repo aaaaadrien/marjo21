@@ -89,7 +89,7 @@ my $nick = $username;
 
 # Informations concernant le Bot :
 my $ircname = 'marjo21 Web Link';
-my $version = '2.0.1';
+my $version = '2.0.2';
 
 # On crée l'objet de connexion à IRC :
 #my $conn; #A supprimer
@@ -702,8 +702,10 @@ sub said
 				{
 					if ( $event->{channel} eq 'msg' && ("$administrator" eq "" || "$event->{'who'}" eq "$administrator" ) )
 					{
+						
 						my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-						my $sql = "SELECT * FROM bugs WHERE solved=0 ORDER BY id";
+						my $sql = "SELECT * FROM bugs WHERE solved=0";
+						
 						my $statement = $db_handle->prepare($sql);
 						$statement->execute();
 
@@ -714,7 +716,8 @@ sub said
 						{
 							while (my $row_ref = $statement->fetchrow_hashref())
 							{
-								$result = "#$row_ref->{id} : $row_ref->{message} (par $row_ref->{user} le $row_ref->{dateandtime})";
+								$result = "$row_ref->{id} : $row_ref->{message} (par $row_ref->{user} le $row_ref->{dateandtime})";
+								
 								$self->say(
 									who => $event->{who},
 									channel => 'msg',
@@ -727,7 +730,7 @@ sub said
 							$self->say(
 								who => $pseudo,
 								channel => 'msg',
-								body => "Il n'y a plus de bogues... Cool !",
+								body => "Il n'y a pas de bug...",
 							);
 						}
 
