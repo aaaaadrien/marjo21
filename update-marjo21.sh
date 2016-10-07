@@ -9,6 +9,7 @@ arg=$1
 version="master"
 
 if [[ -z $1 ]]
+then
 	echo "Mise à jour du programme ..."
 	
 	rm update-marjo21.sh
