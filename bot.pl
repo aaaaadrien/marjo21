@@ -423,7 +423,12 @@ sub said
 								}
 
 							} else {
-								print $res->status_line, "\n";
+								#print $res->status_line, "\n";
+								my $error = $res->status_line;
+								$self->say(
+									channel => "$channel",
+									body => "Je ne peux pas indexer ce contenu, car le site me renvoie l'erreur suivante : $error",
+								);
 							} # Fin if is success
 						
 
