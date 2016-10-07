@@ -27,6 +27,9 @@ wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master
 rm public_html/about.php
 wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/about.php
 
+rm public_html/bugs.php
+wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/bugs.php
+
 rm public_html/help.php
 wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/master/public_html/help.php
 
