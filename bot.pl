@@ -6,6 +6,7 @@ use threads;
 use threads::shared;
 
 package Marjo21;
+my $version = '2.0.3';
 
 use DBI;
 use Encode;
@@ -89,7 +90,6 @@ my $nick = $username;
 
 # Informations concernant le Bot :
 my $ircname = 'marjo21 Web Link';
-my $version = '2.0.2';
 
 # On crée l'objet de connexion à IRC :
 #my $conn; #A supprimer

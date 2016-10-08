@@ -20,14 +20,14 @@
 	<?php
 
 	echo '<table>';
-	echo '<tr><th>Date et Heure</th><th>Utilisateur</th><th>Message</th><th></th></tr>';
+	echo '<tr><th>#</th><th>Date et Heure</th><th>Utilisateur</th><th>Message</th><th></th></tr>';
 	$res = $pdo->query("SELECT * FROM bugs ORDER BY solved,dateandtime ASC LIMIT 100");
 	$res->setFetchMode(PDO::FETCH_ASSOC);
 	
 	foreach ( $res as $row )
 	{
 		if ($row['solved'] == 1) { $solved="&#x2713;"; } else { $solved="&#x2717;";}
-	        echo '<tr><td>'.$row['dateandtime'].'</td><td>'.$row['user'].'</td><td>'.$row['message'].'</td><td>'.$solved.'</td></tr>';
+	        echo '<tr><td>'.$row['id'].'</td><td>'.$row['dateandtime'].'</td><td>'.$row['user'].'</td><td>'.$row['message'].'</td><td>'.$solved.'</td></tr>';
 	}
 
 	
