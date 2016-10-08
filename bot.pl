@@ -487,8 +487,33 @@ sub said
 				my @params = grep {!/^\s*$/} split(/\s+/, substr($text, length("!$commande")));
 				if (defined($params[0]) && $params[0] ne '')
 				{
+					#print STDERR $params[0];
+					#print STDERR $params[1];
+					
+					
 					my $db_handle = DBI->connect("dbi:mysql:database=$db;host=$dbhost:$dbport;user=$dbuser;password=$dbpasswd");
-					my $sql = "SELECT * FROM links WHERE title LIKE '%$params[0]%' ORDER BY id";
+					#my $sql = "SELECT * FROM links WHERE title LIKE '%$params[0]%' ORDER BY id";
+					my $sql = "SELECT * FROM links WHERE ";
+					my $nbkeywords = $#params;
+					my $i=0;
+
+					if ( $nbkeywords > 0)
+					{
+						for ( $i; $i < $nbkeywords ; $i++ )
+						{
+							#print STDERR $i;
+							$sql = $sql."title LIKE \"%".$params[$i]."%\" AND ";
+						}
+						$sql = $sql."title LIKE \"%".$params[$i]."%\" ";
+					}
+					else
+					{
+						$sql = $sql."title LIKE \"%".$params[$i]."%\" ";
+					}
+					$sql = $sql."ORDER BY dateandtime DESC LIMIT 100";
+
+					#print STDERR $sql;
+
 					my $statement = $db_handle->prepare($sql);
 					$statement->execute();
 
