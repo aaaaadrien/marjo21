@@ -8,5 +8,5 @@ $dbuser="marjo21dev";
 $dbpasswd="PerlIsTheBestLanguage!!!!";
 
 // Pagination settings
-$linksbypage = 20;
+$linksbypage = 25;
 ?>

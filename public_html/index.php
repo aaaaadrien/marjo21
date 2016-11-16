@@ -58,28 +58,27 @@
 	
 	echo '</table>';
 
-	echo '<br /> <br />';
+	echo '<div style="margin-top: 1em;" class="txtcenter" >';
 
-	echo '<div class="txtcenter">';
 
 	if ( $curpage > 1 )
 	{
-		echo "<a href='?page=".($curpage-1)."'> <- Page précédente</a>";
+		echo "<a href='?page=".($curpage-1)."'> &larr; Page précédente</a>";
 	}
 	else
 	{
-		echo "<- Page précédente";
+		echo "&larr; Page précédente";
 	}
 
-	echo '&nbsp;&nbsp; Page '.$curpage.'/'.$nbpages.' &nbsp;&nbsp;';
+	echo ' &nbsp;&bull;&nbsp; Page '.$curpage.'/'.$nbpages.' &nbsp;&bull;&nbsp; ';
 
 	if ( $curpage < $nbpages )
 	{
-		echo "<a href='?page=".($curpage+1)."'>Page suivante -></a>";
+		echo "<a href='?page=".($curpage+1)."'>Page suivante &rarr;</a>";
 	}
 	else
 	{
-		echo "Page suivante ->";
+		echo "Page suivante &rarr;";
 	}
 	?>
 	</div>
