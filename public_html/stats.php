@@ -86,6 +86,23 @@
 
 	?>
 
+	<br /><hr />
+	<h2>Statistiques diverses</h2>
+
+	<?php
+	$totalusers=$pdo->query('SELECT DISTINCT user FROM links')->rowCount(); 
+	$totallinks=$pdo->query('SELECT id FROM links')->rowCount();
+	?>
+
+	<ul>
+		<li><?php echo $totallinks; ?> liens postés</li>
+		<li><?php echo $totalusers; ?> utilisateurs</li>
+	</ul>
+
+
+
+
+
 	</div>
 
 	</body>
