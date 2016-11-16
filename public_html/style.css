@@ -6,6 +6,7 @@ margin-right: auto;
 background-image: linear-gradient(#D2DDDF, #57A5D7);
 background-repeat: repeat-x;
 background-color: #57A5D7;
+/*font-size: 14px;*/
 }
 
 h1
@@ -50,6 +51,7 @@ td
 {
 border: 1px solid #6c6c6c;
 padding: 2px;
+/*white-space: nowrap;*/
 }
 
 #navigation {
@@ -115,4 +117,7 @@ background: #efefef;
 
 .command {
 font-weight: bold;
+}
+.txtcenter{
+text-align: center;
 }

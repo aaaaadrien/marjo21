@@ -19,9 +19,35 @@
 	
 	<?php
 
+
+	//Pagination
+	$total=$pdo->query('SELECT id FROM links')->rowCount(); 
+	$nbpages=ceil($total/$linksbypage);
+
+	if(isset($_GET['page'])) 
+	{
+		$curpage=intval($_GET['page']);
+ 
+		if($curpage>$nbpages) 
+		{
+			$curpage=$nbpages;
+		}
+	}
+	else
+	{
+		$curpage=1;
+	}
+
+	$from=($curpage-1)*$linksbypage;
+
+
+	//echo "TOT $total - LNKPP $linksbypage - NBP $nbpages - PA $curpage";
+
+
+
 	echo '<table>';
 	echo '<tr><th>Date et Heure</th><th>Utilisateur</th><th>Lien posté</th></tr>';
-	$res = $pdo->query("SELECT * FROM links ORDER BY dateandtime DESC LIMIT 100");
+	$res = $pdo->query("SELECT * FROM links ORDER BY dateandtime DESC LIMIT ".$from.", ".$linksbypage.";");
 	$res->setFetchMode(PDO::FETCH_ASSOC);
 	
 	foreach ( $res as $row )
@@ -32,7 +58,31 @@
 	
 	echo '</table>';
 
+	echo '<br /> <br />';
+
+	echo '<div class="txtcenter">';
+
+	if ( $curpage > 1 )
+	{
+		echo "<a href='?page=".($curpage-1)."'> <- Page précédente</a>";
+	}
+	else
+	{
+		echo "<- Page précédente";
+	}
+
+	echo '&nbsp;&nbsp; Page '.$curpage.'/'.$nbpages.' &nbsp;&nbsp;';
+
+	if ( $curpage < $nbpages )
+	{
+		echo "<a href='?page=".($curpage+1)."'>Page suivante -></a>";
+	}
+	else
+	{
+		echo "Page suivante ->";
+	}
 	?>
+	</div>
 	
 	</div>
 
