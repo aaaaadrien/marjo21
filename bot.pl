@@ -816,10 +816,23 @@ sub said
 			#if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne '!' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' && $commande ne 'bug' )
 			{ 
 				#$conn->privmsg($channel,"$event->{'nick'} : Commande inconnue. Taper !help pour plus d'informations...");
-				$self->say(
-					channel => "$channel",
-					body =>  "$event->{who} : Commande inconnue. Taper !help pour plus d'informations...",
-				);
+
+				if ( $event->{channel} eq 'msg' )
+				{
+					$self->say(
+						who => $event->{who},
+						channel => "msg",
+						body =>  "$event->{who} : Commande inconnue. Taper !help pour plus d'informations...",
+					);
+				}
+				else
+				{
+					$self->say(
+						who => $event->{who},
+						channel => "$channel",
+						body =>  "$event->{who} : Commande inconnue. Taper !help pour plus d'informations...",
+					);
+				}
 			}
 		}		
         	else
