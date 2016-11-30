@@ -669,6 +669,18 @@ sub said
 				 }
 			} # Fin !talk
 
+			if ($commande eq 'ip')
+			{
+				my $ua = LWP::UserAgent->new(agent => $useragent, ssl_opts => { verify_hostname => 0 });
+				my $response = $ua->get('https://api.ipify.org/');
+				my $ip = $response->decoded_content;
+					$self->say(
+						who => $event->{who},
+						channel => "msg",
+						body => "$ip",
+					);
+			}
+
 			if ($commande eq 'bug')
 			{
 				my $subcommand = substr($text, 5, 3);
@@ -811,7 +823,7 @@ sub said
 
 			} # Fin !bug
 
-			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about', 's', 'h');
+			my @commands = ('last','link','l','!','bonjour','help','search','talk','bug', 'about', 's', 'h', 'ip');
 			unless ( $commande ~~ @commands ) # unless : execute if condition is false
 			#if ( $commande ne 'last' && $commande ne 'link' && $commande ne 'l' && $commande ne '!' && $commande ne 'bonjour' && $commande ne 'help' && $commande ne 'search' && $commande ne 'talk' && $commande ne 'bug' )
 			{ 
