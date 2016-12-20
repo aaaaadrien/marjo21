@@ -73,7 +73,7 @@
 			<div id="user" class="forms">
 				<form method="GET" action="<?php echo $_SERVER['PHP_SELF'] ;?>">
 					<label>Utilisateur : </label>
-					<input type="text" name="user" required="required" value="<?php if (isset($_GET['user'])) echo $_GET['user']; ?>" />
+					<input type="text" name="user" required="required" value="<?php if (isset($_GET['user'])) echo htmlspecialchars($_GET['user']); ?>" />
 					<input type="submit" value="Filtrer" />
 				</form>
 			</div>
@@ -81,9 +81,9 @@
 			<div id="date"  class="forms">
 				<form method="GET" action="<?php echo $_SERVER['PHP_SELF'] ;?>">
 					<label>Du :</label>
-					<input type="text" name="start" required="required" value="<?php if (isset($_GET['start'])) echo $_GET['start']; ?>" class="date"/>
+					<input type="text" name="start" required="required" value="<?php if (isset($_GET['start'])) echo htmlspecialchars($_GET['start']); ?>" class="date"/>
 					<label>au</label>
-					<input type="text" name="end" required="required" value="<?php if (isset($_GET['end'])) echo $_GET['end']; ?>" class="date"/>
+					<input type="text" name="end" required="required" value="<?php if (isset($_GET['end'])) echo htmlspecialchars($_GET['end']); ?>" class="date"/>
 					<input type="submit" value="Filtrer" />
 				</form>
 			</div>
@@ -91,7 +91,7 @@
 			<div id="site" class="forms">
 				<form method="GET" action="<?php echo $_SERVER['PHP_SELF'] ;?>">
 					<label>Site : </label>
-					<input type="text" name="site" required="required" value="<?php if (isset($_GET['site'])) echo $_GET['site']; ?>" />
+					 <input type="text" name="site" required="required" value="<?php if (isset($_GET['site'])) echo  htmlspecialchars($_GET['site']); ?>" />
 					<input type="submit" value="Filtrer" />
 				</form>
 			</div>
@@ -99,7 +99,7 @@
 			<div id="keyword" class="forms">
 				<form method="GET" action="<?php echo $_SERVER['PHP_SELF'] ;?>">
 					<label>Mot clé : </label>
-					<input type="text" name="keywords" required="required" value="<?php if (isset($_GET['keywords'])) echo $_GET['keywords']; ?>" />
+					<input type="text" name="keywords" required="required" value="<?php if (isset($_GET['keywords'])) echo htmlspecialchars($_GET['keywords']); ?>" />
 					<input type="submit" value="Filtrer" />
 				</form>
 			</div>
@@ -184,7 +184,7 @@
 	
 	if ( isset($_GET['site']) && preg_match('/^[A-Za-z0-9-.]+$/',$_GET['site']) )
 	{
-		$sitesearch = $_GET['site'];
+		$sitesearch = addslashes($_GET['site']);
 		$res = $pdo->query("SELECT * FROM links WHERE link LIKE \"%$sitesearch%\" ORDER BY dateandtime DESC LIMIT 100");
 		$res->setFetchMode(PDO::FETCH_ASSOC);
 
