@@ -10,7 +10,7 @@
 	$rssfeed .= '	<channel>'.PHP_EOL;
 	$rssfeed .= '		<title>RSS Marjo21</title>'.PHP_EOL;
 	$rssfeed .= '		<link>'.$protocol.$_SERVER['HTTP_HOST'].'</link>'.PHP_EOL;
-	$rssfeed .= '		<description>escription>'.PHP_EOL;
+	$rssfeed .= '		<description>Flux RSS pour marjo21</description>'.PHP_EOL;
 	$rssfeed .= '		<language>en-us</language>'.PHP_EOL;
 	$rssfeed .= '		<copyright>Copyright (C) 2016 marjo21</copyright>'.PHP_EOL;
  
