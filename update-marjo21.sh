@@ -64,4 +64,8 @@ then
 	rm public_html/style.css
 	wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/$version/public_html/style.css
 
+	rm public_html/rss/index.php
+	mkdir public_html/rss
+	wget -P public_html/rss https://raw.githubusercontent.com/aaaaadrien/marjo21/$version/public_html/rss/index.php
+
 fi
