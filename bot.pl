@@ -6,7 +6,7 @@ use threads;
 use threads::shared;
 
 package Marjo21;
-my $version = '2.0.3';
+my $version = '2.0.4';
 
 use DBI;
 use Encode;
