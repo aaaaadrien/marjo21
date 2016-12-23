@@ -546,26 +546,23 @@ sub said
 						}
 						else
 						{
+							if ( $event->{channel} ne 'msg' )
+							{
+								$self->say(
+									channel => "$channel",
+									body =>  "$event->{who} : Je t'ai envoyé les résultats de ta recherche mon p'tit chou !",
+								);
+							}
 							while (my $row_ref = $statement->fetchrow_hashref())
 							{
 								$result = "$row_ref->{title} ( $row_ref->{link} ) par $row_ref->{user} le $row_ref->{dateandtime}";
 								#$conn->print("<$nick>\t| $result");
 								#$conn->privmsg($channel,$result);
-								if ( $event->{channel} eq 'msg' )
-								{
-									$self->say(
-										who => $event->{who},
-										channel => "msg",
-										body =>  "$result",
-									);
-								}
-								else
-								{
-									$self->say(
-										channel => "$channel",
-										body =>  "$result",
-									);
-								}
+								$self->say(
+									who => $event->{who},
+									channel => "msg",
+									body =>  "$result",
+								);
 							}
 						}
 					}
