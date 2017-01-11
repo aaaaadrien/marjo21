@@ -22,7 +22,7 @@
 	foreach ( $res as $row )
 	{
 		$rssfeed .= '		<item>'.PHP_EOL;
-		$rssfeed .= '			<title>' . htmlspecialchars($row['title']) . '</title>'.PHP_EOL;
+		$rssfeed .= '			<title>' . htmlspecialchars($row['user']) . ': ' . htmlspecialchars($row['title']) . '</title>'.PHP_EOL;
 		$rssfeed .= '			<link>' . htmlspecialchars($row['link']) . '</link>'.PHP_EOL;
 		$rssfeed .= '			<guid>' . htmlspecialchars($row['link']) . '</guid>'.PHP_EOL;
 		$rssfeed .= '			<description>' . htmlspecialchars($row['title']) . '</description>'.PHP_EOL;
