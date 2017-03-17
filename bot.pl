@@ -307,10 +307,21 @@ sub said
 								{
 									$alreadypost = 1;
 									#$conn->privmsg($channel, decode_utf8($row_ref->{title})." (déjà posté par $row_ref->{user} le $row_ref->{dateandtime})");
-									$self->say(
-										channel => "$channel",
-										body => "Tu arrives en retard ... $row_ref->{user} l'a fait avant toi le $row_ref->{dateandtime} ! Pour info : $row_ref->{title} ",
-									);
+									if ( "$event->{who}" eq "$row_ref->{user}" )
+									{
+										$self->say(
+											channel => "$channel",
+											body => "Je crois que $row_ref->{user} est atteint d'Alzeimer... pour info le $row_ref->{dateandtime} : $row_ref->{title} ",
+										);
+									}
+									else
+									{
+										$self->say(
+											channel => "$channel",
+											body => "Tu arrives en retard ... $row_ref->{user} l'a fait avant toi le $row_ref->{dateandtime} ! Pour info : $row_ref->{title} ",
+										);
+									
+									}
 								}
 								$statement->finish;
 								$db_handle->disconnect();
