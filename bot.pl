@@ -193,9 +193,15 @@ sub said
 				#&help($channel, $event->{'nick'});
 				if ($event->{channel} ne 'msg')
 				{
+					my $body = "";
+					my $rand = int(rand(3));
+					$body = "$event->{who}: Je t'ai envoyé un message privé mon p'tit chou ! :-)" if ( $rand == 0 );
+					$body = "$event->{who}: Regarde tes MP et tu sauras comment m'utiliser ;)" if ( $rand == 1 );
+					$body = "$event->{who}: Viens, on va flirter en privé :P" if ( $rand == 2 );
+
 					$self->say(
 						channel => $channel,
-						body => "$event->{who}: Je t'ai envoyé un message privé mon p'tit chou ! :-)",
+						body => "$body",
 					);
 				}
 				my @help;
@@ -222,9 +228,15 @@ sub said
 			{
 				if ($event->{channel} ne 'msg')
 				{
+					my $body = "";
+					my $rand = int(rand(3));
+					$body = "$event->{who}: Je t'ai envoyé un message privé mon p'tit chou ! :-)" if ( $rand == 0 );
+					$body = "$event->{who}: Regarde tes MP et tu sauras comment m'utiliser ;)" if ( $rand == 1 );
+					$body = "$event->{who}: Viens, on va flirter en privé :P" if ( $rand == 2 );
+					
 					$self->say(
 						channel => $channel,
-						body => "$event->{who}: Je t'ai envoyé un message prové mon p'tit chou ! :-)",
+						body => "$body",
 					);
 				}
 				my @about;
@@ -246,20 +258,27 @@ sub said
 		
 			if ($commande eq 'bonjour')
 			{
+
+				my $body = "";
+				my $rand = int(rand(3));
+				$body = "Bonjour $event->{who}" if ( $rand == 0 );
+				$body = "Wesh $event->{who}" if ( $rand == 1 );
+				$body = "Salut $event->{who}" if ( $rand == 2 );
+
 				#&bonjour($channel, $event->{'nick'});
 				if ( $event->{channel} eq 'msg' )
 				{
 					$self->say(
 						who => $event->{who},
 						channel => "msg",
-						body => "Bonjour $event->{who}",
+						body => "$body",
 					);
 				}
 				else
 				{
 					$self->say(
 						channel => $channel,
-						body => "Bonjour $event->{who}",
+						body => "$body",
 					);
 				}
 			}
@@ -309,16 +328,27 @@ sub said
 									#$conn->privmsg($channel, decode_utf8($row_ref->{title})." (déjà posté par $row_ref->{user} le $row_ref->{dateandtime})");
 									if ( "$event->{who}" eq "$row_ref->{user}" )
 									{
+										my $body = "";
+										my $rand = int(rand(3));
+										$body = "Je crois que $row_ref->{user} est atteint d'Alzeimer... Pour info : $row_ref->{title} (le $row_ref->{dateandtime})" if ( $rand == 0 );
+										$body = "$row_ref->{user} est un poisson rougeuh, na-na-na-na-nèreuh ! Pour info : $row_ref->{title} (le $row_ref->{dateandtime})" if ( $rand == 1 );
+										$body = "T'as besoin d'une barrette de RAM en plus dans la cervelle $row_ref->{user} ? Pour info : $row_ref->{title} (le $row_ref->{dateandtime})" if ( $rand == 2 );
+
 										$self->say(
 											channel => "$channel",
-											body => "Je crois que $row_ref->{user} est atteint d'Alzeimer... pour info le $row_ref->{dateandtime} : $row_ref->{title} ",
+											body => "$body",
 										);
 									}
 									else
 									{
+										my $body = "";
+										my $rand = int(rand(3));
+										$body = "Tu arrives en retard ... $row_ref->{user} l'a fait avant toi ! Pour info : $row_ref->{title} (le $row_ref->{dateandtime}) " if ( $rand == 0 );
+										$body = "LOL ! $row_ref->{user} a été plus rapide que toi ! Pour info : $row_ref->{title} (le $row_ref->{dateandtime})" if ( $rand == 1 );
+										$body = "Looser ! Paye un café à $row_ref->{user} qui vu le lien avant toi ! Pour info : $row_ref->{title} (le $row_ref->{dateandtime})" if ( $rand == 2 );
 										$self->say(
 											channel => "$channel",
-											body => "Tu arrives en retard ... $row_ref->{user} l'a fait avant toi le $row_ref->{dateandtime} ! Pour info : $row_ref->{title} ",
+											body => "$body",
 										);
 									
 									}
