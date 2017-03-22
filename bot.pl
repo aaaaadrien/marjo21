@@ -566,9 +566,12 @@ sub said
 					{
 						if ( $num == 0 )
 						{
-							$result = "Il n'y a pas de résultats mon p'tit chou !";
-							#$conn->print("<$nick>\t| $result");
-							#$conn->privmsg($channel,$result);
+							my $rand = int(rand(3));
+							$result = "Il n'y a pas de résultats mon p'tit chou !" if ( $rand == 0 );
+							$result = "J'ai rien pour toi ! Désolé !" if ( $rand == 1 );
+							$result = "Je suis blonde, j'ai rien trouvé !" if ( $rand == 2 );
+
+
 							if ( $event->{channel} eq 'msg' )
 							{
 								$self->say(
@@ -589,9 +592,15 @@ sub said
 						{
 							if ( $event->{channel} ne 'msg' )
 							{
+								my $body = "";
+								my $rand = int(rand(3));
+								$body = "$event->{who} : Je t'ai envoyé les résultats de ta recherche mon p'tit chou !" if ( $rand == 0 );
+								$body = "$event->{who} : Regarde tes MP, t'as un p'tit message coquin avec ta recherche !" if ( $rand == 1 );
+								$body = "$event->{who} : Tous tes désirs sont réalité ! Regarde en privé ;) (et ça rime)" if ( $rand == 2 );
+
 								$self->say(
 									channel => "$channel",
-									body =>  "$event->{who} : Je t'ai envoyé les résultats de ta recherche mon p'tit chou !",
+									body =>  "$body",
 								);
 							}
 							while (my $row_ref = $statement->fetchrow_hashref())
@@ -610,7 +619,10 @@ sub said
 					else
 					{
 						my $urlgen = $website."/search.php?keywords=".$params[0];
-						$result = "Il y a plus de 5 résultats. Consulte ta recherche sur $urlgen";
+						my $rand = int(rand(3));
+						$result = "Il y a plus de 5 résultats. Je ne veut pas innonder IRC => $urlgen" if ( $rand == 0 );
+						$result = "Oulà y en a trop pour moi ! Jette un oeil sur mon site $urlgen (et y a des photos de moi :P)" if ( $rand == 1 );
+						$result = "On dit qu'une fille parle beaucoup c'est vrai, mais bon, là il y a trop à dire...Les résultats sont ici : $urlgen" if ( $rand == 2 );
 						#$conn->print("<$nick>\t| $result");
 						#$conn->privmsg($channel,$result);
 						if ( $event->{channel} eq 'msg' )
