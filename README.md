@@ -12,6 +12,8 @@ PERL >= 5.12
 
 POE::Component::IRC (PERL Module)
 
+Bot::BasicBot (PERL Module)
+
 Net::SSLeay (PERL Module)
 
 LWP::UserAgent (PERL Module)
@@ -49,6 +51,7 @@ INSTALL CPAN MODULES
 --------------------
 
 cpan -fi POE::Component::IRC
+cpan -fi Bot::BasicBot
 
 cpan -fi Net::SSLeay 
 
