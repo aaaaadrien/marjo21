@@ -1,0 +1,12 @@
+<?php
+
+// Database settings
+$db="dbname";
+$dbhost="localhost";
+$dbport=3306;
+$dbuser="dbuser";
+$dbpasswd="dbpasswd";
+
+// Pagination settings
+$linksbypage = 25;
+?>

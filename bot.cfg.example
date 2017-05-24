@@ -1,0 +1,35 @@
+# MARJO21'S CONFIG FILE
+
+# IRC SERVER NAME
+$server=chat.freenode.net
+
+# IRC SERVER/CHANEL CHARSET ENCODING
+$ircencoding=iso-8859-1
+
+# CHANNEL NAME
+$channel=#channel
+
+# USERNAME
+$username=botusername
+
+# WEBSITE WHERE USERS CAN FIND LOGS
+$website=https://botwebsite.com
+
+# DATABASE INFORMATION
+$db=dbname
+$dbhost=localhost
+$dbport=3306
+$dbuser=dbuser
+$dbpasswd=dbpassword
+
+# DUPLICATES LINKS (0 or 1)
+$checkdup=1
+
+# ADMINISTRATOR
+$administrator=adminusername
+
+
+### EXPERIMENTAL ###
+
+# BLACKLISTED websites FROM http://dsi.ut-capitole.fr/blacklists/
+$blacklists=0

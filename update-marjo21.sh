@@ -29,6 +29,9 @@ then
 	wget https://raw.githubusercontent.com/aaaaadrien/marjo21/$version/bot.pl
 	chmod +x bot.pl
 
+	rm bot.cfg.example
+	wget https://raw.githubusercontent.com/aaaaadrien/marjo21/$version/bot.cfg.example
+
 	echo "Mise à jour du site ..."
 
 	rm public_html/header.php
@@ -60,6 +63,9 @@ then
 
 	rm public_html/stats.php
 	wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/$version/public_html/stats.php
+
+	rm public_html/config.php.example
+	wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/$version/public_html/config.php.example
 
 	rm public_html/style.css
 	wget -P public_html/ https://raw.githubusercontent.com/aaaaadrien/marjo21/$version/public_html/style.css

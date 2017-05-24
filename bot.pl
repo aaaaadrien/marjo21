@@ -2,8 +2,8 @@
 
 use strict;
 use warnings;
-use threads;
-use threads::shared;
+#use threads;
+#use threads::shared;
 
 package Marjo21;
 my $version = '2.0.4';
