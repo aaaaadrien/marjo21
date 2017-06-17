@@ -464,12 +464,15 @@ sub said
 								}
 
 							} else {
-								#print $res->status_line, "\n";
-								my $error = $res->status_line;
-								$self->say(
-									channel => "$channel",
-									body => "Je ne peux pas indexer ce contenu, car le site me renvoie l'erreur suivante : $error",
-								);
+								if ( $blacklisted ne 1)
+								{
+									#print $res->status_line, "\n";
+									my $error = $res->status_line;
+									$self->say(
+										channel => "$channel",
+										body => "Je ne peux pas indexer ce contenu, car le site me renvoie l'erreur suivante : $error",
+									);
+								} #Fin if( $blacklisted ne 1)
 							} # Fin if is success
 						
 
