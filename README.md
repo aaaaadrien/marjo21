@@ -51,12 +51,15 @@ INSTALL CPAN MODULES
 --------------------
 
 cpan -fi POE::Component::IRC
+
 cpan -fi Bot::BasicBot
 
 cpan -fi Net::SSLeay 
 
 cpan -fi LWP::UserAgent
+
 cpan -fi LWP::Protocol::https
+
 cpan -fi HTTP::Request
 
 cpan -fi Try::Tiny
