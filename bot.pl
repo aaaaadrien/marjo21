@@ -18,6 +18,7 @@ use open qw(:std :utf8);
 #use Net::IRC; # old IRC module
 use base qw( Bot::BasicBot ); # new IRC module
 use Net::SSLeay; # A réinstaller en cas de mise à jour d'OpenSSL !!!
+use IO::Socket::SSL;
 use LWP::UserAgent;
 use LWP::Protocol::https;
 use HTTP::Request;

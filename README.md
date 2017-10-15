@@ -16,6 +16,8 @@ Bot::BasicBot (PERL Module)
 
 Net::SSLeay (PERL Module)
 
+IO::Socket::SSL (PERL Module)
+
 LWP::UserAgent (PERL Module)
 
 LWP::Protocol::https (PERL Module)
@@ -55,6 +57,8 @@ cpan -fi POE::Component::IRC
 cpan -fi Bot::BasicBot
 
 cpan -fi Net::SSLeay 
+
+cpan -fi IO::Socket::SSL
 
 cpan -fi LWP::UserAgent
 
