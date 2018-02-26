@@ -55,4 +55,10 @@ fi
 
 echo "" >> "$ficrap"
 
-echo SAUVEGARDE TERMINEE >> "$ficrap
+echo SAUVEGARDE TERMINEE >> "$ficrap"
+
+echo "" >> "$ficrap"
+
+echo "On purge les anciennes sauvegardes (+ de 14j)" >> "$ficrap"
+find "$pathsav" -mtime +14 -exec rm -fv {} \; >> "$ficrap"
+echo "Purge terminée"  >> "$ficrap"
