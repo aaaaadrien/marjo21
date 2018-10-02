@@ -3,6 +3,9 @@
 # IRC SERVER NAME
 $server=chat.freenode.net
 
+# PASSWORD (FREENODE PASSWORD)
+$password=password
+
 # IRC SERVER/CHANEL CHARSET ENCODING
 $ircencoding=iso-8859-1
 

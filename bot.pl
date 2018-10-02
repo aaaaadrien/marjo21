@@ -6,7 +6,7 @@ use warnings;
 #use threads::shared;
 
 package Marjo21;
-my $version = '2.0.4';
+my $version = '2.0.5';
 
 use DBI;
 use Encode;
@@ -42,6 +42,7 @@ my $cfg = "bot.cfg";
 
 open (CONFIG, $cfg);
 my $server;
+my $password;
 my $ircencoding = "iso-8859-1";
 my $channel;
 my $website;
@@ -59,6 +60,7 @@ my $useragent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/2010010
 while (<CONFIG>) {
 	chomp;
 	$server = substr($_, 8) if ( $_ =~ /^\$server\=/);
+	$password = substr($_, 10) if ( $_ =~ /^\$password\=/);
 	$ircencoding = substr($_, 13) if ( $_ =~ /^\$ircencoding\=/);
 	$channel = substr($_, 9) if ( $_ =~ /^\$channel\=/);
 	$username = substr($_, 10) if ( $_ =~ /^\$username\=/);
@@ -101,6 +103,7 @@ print "Start marjo21 : $datestring\n";
 # On crée l'objet qui nous permet de nous connecter à IRC :
 Marjo21->new(
 	server => $server,
+	password => $password,
 	channels => [ $channel ],
 	nick => $nick,
 	charset => $ircencoding,
