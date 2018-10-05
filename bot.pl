@@ -55,7 +55,7 @@ my $dbuser;
 my $dbpasswd;
 my $administrator;
 my $checkdup;
-my $useragent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0';
+my $useragent = '';
 
 while (<CONFIG>) {
 	chomp;
