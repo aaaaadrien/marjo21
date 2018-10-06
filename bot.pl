@@ -55,7 +55,7 @@ my $dbuser;
 my $dbpasswd;
 my $administrator;
 my $checkdup;
-my $useragent = '';
+my $useragent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0';
 
 while (<CONFIG>) {
 	chomp;
@@ -374,6 +374,11 @@ sub said
 
 						if ( $alreadypost ne 1 )
 						{
+							
+							# Workaround youtube
+							$useragent = '' if ( $url =~ /\.youtube\.com/);
+							$useragent = '' if ( $url =~ /\.youtu\.be/);
+							
 							my $ua = LWP::UserAgent->new(agent => $useragent, ssl_opts => { verify_hostname => 0 });
 							my $res = $ua->request(HTTP::Request->new(GET => $url));
 						
