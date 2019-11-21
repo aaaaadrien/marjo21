@@ -3,6 +3,8 @@ marjo21
 
 Sexy IRC bot written (from scratch) in perl with a web interface to collect some links on a channel.
 
+No updates since 1 year but already works (2019-11-21 =dev-lang/perl-5.28.2-r1 on gentoo)
+
 PREREQUISITES
 -------------
 
