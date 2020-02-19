@@ -12,6 +12,8 @@ PREREQUISITES
 
 PERL >= 5.12
 
+Bot::BasicBot (PERL Module)
+
 POE::Component::IRC (PERL Module)
 
 Bot::BasicBot (PERL Module)
